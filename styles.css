@@ -75,3 +75,7 @@ body {
 .tail{
     transform: rotate(90deg);
 }
+
+.block{
+    background-color:brown;
+}
