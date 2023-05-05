@@ -1,9 +1,10 @@
 let playground = document.getElementById('playground')
 
-let score = document.getElementById('score')
-let highScore = document.getElementById('highScore')
+let scoreEle = document.getElementById('score')
+let barObject = document.getElementById('barObject')
+let highScoreEle = document.getElementById('highScore')
 let botScore = document.getElementById('botScore')
-
+let sequencePrompt = document.getElementById('sequencePrompt')
 // set up a mouse event listener to detect which direction its going
 // movement
 // let x0, y0 = 0
@@ -30,33 +31,66 @@ let botScore = document.getElementById('botScore')
 
 let blocks = []
 let sequence = []
+let letterSequence = []
+let colorSequence = []
 let sequenceFinsihed = true
-let sequenceLenght = 2
+let sequenceLenght = 5
+let colorDiff = 10
+
+let defaultTime = 30000 //30s
+let currentTime = 0
+
+let score = 0
+let highScore = 0
+let lives = 3
+
 //update game
 function generateSequence() {
     let i = 0;
+    let a = 360 * Math.random()
     while (i != sequenceLenght) {
         let j = Math.floor(side * side * Math.random())
         if (j in snake) continue
         else {
             sequence[i] = j
+            letterSequence[i] = (Math.floor(52 * Math.random()) + 65)
+            if (i == 0) colorSequence[i] = a
+            else colorSequence[i] = a + (i - 1) * colorDiff
             i++
         }
     }
+
 }
 function placeSequence() {
-    sequence.forEach((i) => {
-        cells[i].innerText = sequence.length - (sequence.indexOf(i))
-        cells[i].classList.add("block")
-    })
+    sequencePrompt.textContent = ''
+    for (let i = sequenceLenght - 1; i > 0; i--) {
+        cells[sequence[i]].innerText = String.fromCharCode(letterSequence[i])
+        cells[sequence[i]].style.background = `hsl(${colorSequence[i]},100%,50%)`
+        cells[sequence[i]].classList.add("block")
+
+        let div = document.createElement('div')
+        div.classList.add("prompt")
+        div.innerText = String.fromCharCode(letterSequence[i])
+        div.style.background = `hsl(${colorSequence[i]},100%,50%)`
+
+        sequencePrompt.appendChild(div)
+
+
+    }
 }
 function updateGame() {
+    currentTime += 100
     if (sequenceFinsihed) {
         generateSequence()
         placeSequence()
         sequenceFinsihed = false
         console.log(sequence)
     }
+    scoreEle.textContent = "Score: " + score
+    document.getElementById("lives").textContent = "Lives: " + lives
+
+    barObject.style.width = `${currentTime * 100 / defaultTime}%`
+
 }
 
 // grid
@@ -92,8 +126,14 @@ let side = 0
 let cells = []
 let displacement = 1
 
-let snake = [15, 29, 43, 57] //lenght and head 
+let snake = []
 function setup() {
+    snake = [15, 29, 43, 57]
+    if (localStorage.getItem('lives') === null) sessionStorage.setItem('lives', 3)
+    if (localStorage.getItem('highScore') === null) sessionStorage.setItem('highScore', 0)
+
+    lives = sessionStorage.getItem('lives')
+    highScore = sessionStorage.getItem('highScore')
 
     document.addEventListener('keydown', function (e) {
         if (e.key === "ArrowLeft") {
@@ -116,13 +156,12 @@ function setup() {
 }
 
 function loop() {
-    let flag = true
     var loop = setInterval(() => {
-        if (flag) {
+        if (lives > 0) {
             flag = !move(displacement)
-
             updateGame()
-        } else if (!flag) {
+        } else {
+            console.log("you lost!")
             // grow(false)
             clearInterval(loop)
         }
@@ -186,9 +225,14 @@ function blockCollided(i) {
     if (i == last && sequence.length > 0) {
         cells[i].classList.add('square')
         cells[i].classList.remove('block')
+        cells[i].style.background = ""
         cells[i].innerText = ''
 
         grow(true)
+
+        sequencePrompt.removeChild(sequencePrompt.firstChild)
+        // increment bg 
+
         return false;
     }
     else if (sequence.length === 0 && i == last) {
@@ -198,7 +242,13 @@ function blockCollided(i) {
 
         grow(true)
         console.log("sequence finsihed!")
+
+        sequencePrompt.removeChild(sequencePrompt.firstChild)
+        // increment bg 
+
         sequenceFinsihed = true
+        score++
+        defaultTime += 5000 //+5s
 
         updateGame()
         return false;
@@ -248,7 +298,14 @@ function grow(grow) {
 }
 
 function endgame() {
-    console.log('you lost!')
+    lives--;
+    if (lives > 0) {
+        console.log('reloading`')
+        location.reload()
+        sessionStorage.setItem("lives", lives)
+        if (score > highScore) sessionStorage.setItem("highScore", highScore)
+    } else if(lives = 0){
+    }
 }
 // make a game manager to decide spawnning and handle background styleing and scores and save and pause
 // make moveAble to handle snake movement and anything
