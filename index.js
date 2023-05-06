@@ -41,6 +41,8 @@ let colorDiff = 10
 let defaultTime = 30000 //30s
 let currentTime = 0
 
+let factor = 1
+
 let score = 0
 let highScore = 0
 let lives = 3
@@ -67,7 +69,7 @@ function generateSequence() {
 }
 function placeSequence() {
     sequencePrompt.textContent = ''
-    for (let i = sequenceLenght-1; i >= 0; i--) {
+    for (let i = sequenceLenght - 1; i >= 0; i--) {
         console.log(sequence[i])
         cells[sequence[i]].innerHTML = "<span>" + String.fromCharCode(letterSequence[i]) + "</span>"
         cells[sequence[i]].style.background = `hsl(${colorSequence[i]},100%,50%)`
@@ -82,7 +84,8 @@ function placeSequence() {
     }
 }
 function updateGame() {
-    currentTime += 100
+    currentTime += 75
+    console.log(currentTime)
     if (sequenceFinsihed) {
         generateSequence()
         placeSequence()
@@ -165,7 +168,21 @@ function setup() {
 }
 
 function loop() {
-    var loop = setInterval(() => {
+    // var loop = setInterval(() => {
+    //     if (!paused) {
+    //         if (lives > 0) {
+    //             updateGame()
+    //             move(displacement)
+    //         } else if (lives === 0) {
+    //             console.log("you lost!")
+    //             // grow(false)
+    //             clearInterval(loop)
+    //         }
+    //     } else {
+    //         return;
+    //     }
+    // }, Math.floor(100 * (1-currentTime/defaultTime)));
+    function updateLoop(timeout) {
         if (!paused) {
             if (lives > 0) {
                 updateGame()
@@ -173,12 +190,18 @@ function loop() {
             } else if (lives === 0) {
                 console.log("you lost!")
                 // grow(false)
-                clearInterval(loop)
+                // clearInterval(timeout)
+                return;
             }
         } else {
             return;
         }
-    }, 100)
+
+        setTimeout(updateLoop, Math.floor(100 * (1-currentTime/defaultTime)))
+    }
+    setTimeout(updateLoop,100)
+
+
 }
 
 //movement 
@@ -217,7 +240,7 @@ function checkCollision(coord, displacement) {
 
     let x = x0 + xd
     let y = y0 + yd
-    console.log(x*side + y, sequence)
+    console.log(x * side + y, sequence)
     if (y > side - 1 || y < 0) {
         console.log("wall collision")
         return true
@@ -278,7 +301,7 @@ function blockCollided(i) {
 
         sequenceFinsihed = true
         score++
-        defaultTime += 30000 //+5s
+        defaultTime += 30000 //+30s
         updateGame()
         return false;
     }
