@@ -8,7 +8,7 @@ html {
     box-sizing: inherit;
     margin: inherit;
     padding: inherit;
-    
+
 }
 
 body {
@@ -17,17 +17,24 @@ body {
 
     background-color: aqua;
 }
-.bar{
+
+body :after {
+    background-color: blanchedalmond;
+}
+
+.bar {
     background-color: black;
 
-    width:100%;
+    width: 100%;
     height: 1vh;
 }
-.barObject{
+
+.barObject {
 
     height: 1vh;
-    background-color:red;
+    background-color: red;
 }
+
 .nav {
     display: flex;
     justify-content: space-between;
@@ -69,29 +76,33 @@ body {
     border: 1px solid black;
 }
 
-.snake{
-    background-color:green;
+.snake {
+    background-color: green;
 }
-.head{
+
+.head {
     font-size: larger;
 }
-.head , .tail{
+
+.head,
+.tail {
     display: flex;
-    align-items:center;
-    justify-content:center;
+    align-items: center;
+    justify-content: center;
 
     font-family: 'Courier New', Courier, monospace;
 }
-.tail{
+
+.tail {
     transform: rotate(90deg);
 }
 
-.block{
-    background-color:brown;
+.block {
+    background-color: brown;
 }
 
-.prompt{
-    background-color:yellow;
+.prompt {
+    background-color: yellow;
     padding: 1%;
     font-size: larger;
     border-radius: 6px;

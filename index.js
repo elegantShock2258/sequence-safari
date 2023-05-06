@@ -129,10 +129,8 @@ let displacement = 1
 let snake = []
 function setup() {
     snake = [15, 29, 43, 57]
-    if (localStorage.getItem('lives') === null) sessionStorage.setItem('lives', 3)
     if (localStorage.getItem('highScore') === null) sessionStorage.setItem('highScore', 0)
 
-    lives = sessionStorage.getItem('lives')
     highScore = sessionStorage.getItem('highScore')
 
     document.addEventListener('keydown', function (e) {
@@ -158,9 +156,9 @@ function setup() {
 function loop() {
     var loop = setInterval(() => {
         if (lives > 0) {
-            flag = !move(displacement)
+            move(displacement)
             updateGame()
-        } else {
+        } else  if(lives === 0) {
             console.log("you lost!")
             // grow(false)
             clearInterval(loop)
@@ -187,6 +185,11 @@ function move(displacement) {
         cells[snake[0]].innerText = ':D'
     } else if (collide) {
         endgame()
+        displacement = 1
+        sequenceFinsihed = true
+        playground.innerHTML = ''
+        setup()
+        updateGame()
     }
 
     return collide;
@@ -300,11 +303,9 @@ function grow(grow) {
 function endgame() {
     lives--;
     if (lives > 0) {
-        console.log('reloading`')
-        location.reload()
-        sessionStorage.setItem("lives", lives)
         if (score > highScore) sessionStorage.setItem("highScore", highScore)
     } else if(lives = 0){
+        return;
     }
 }
 // make a game manager to decide spawnning and handle background styleing and scores and save and pause
