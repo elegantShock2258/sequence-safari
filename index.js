@@ -2,7 +2,6 @@ let playground = document.getElementById('playground')
 
 let scoreEle = document.getElementById('score')
 let barObject = document.getElementById('barObject')
-let highScoreEle = document.getElementById('highScore')
 let botScore = document.getElementById('botScore')
 let sequencePrompt = document.getElementById('sequencePrompt')
 // set up a mouse event listener to detect which direction its going
@@ -27,9 +26,8 @@ let sequencePrompt = document.getElementById('sequencePrompt')
 //     y0 = e.clientY
 // }))
 
-
-
 let blocks = []
+
 let sequence = []
 let sequenceBackup = []
 let letterSequence = []
@@ -38,7 +36,7 @@ let sequenceFinsihed = true
 let sequenceLenght = 5
 let colorDiff = 10
 
-let defaultTime = 30000 //30s
+let defaultTime = 50000 //50s
 let currentTime = 0
 
 let factor = 1
@@ -94,6 +92,7 @@ function updateGame() {
     }
     scoreEle.textContent = "Score: " + score
     document.getElementById("lives").textContent = "Lives: " + lives
+    document.getElementById("highScore").textContent = "High Score: " + highScore
 
     barObject.style.width = `${currentTime * 100 / defaultTime}%`
     if (currentTime == defaultTime) endgame()
@@ -114,17 +113,18 @@ function setUpGrid(width = 10, sqaureWidth = 80) {
 }
 
 // snake
-function updateSnake() {
+function updateSnake(first = false) {
+    if (first) snake = [15, 29, 43, 57]
     snake.forEach((i) => {
         cells[i].classList.add('snake')
     })
 
     cells[snake[snake.length - 1]].classList.add('tail')
-    cells[snake[snake.length - 1]].innerHTML = '<span>(‿ˠ‿)</span>'
+    cells[snake[snake.length - 1]].innerHTML = '<span></span>'
 
     cells[snake[0]].classList.add('snake')
     cells[snake[0]].classList.add('head')
-    cells[snake[0]].innerHTML = '<span>:D</span>'
+    cells[snake[0]].innerHTML = '<span>UwU</span>'
 }
 
 
@@ -133,55 +133,75 @@ let cells = []
 let displacement = 1
 
 let snake = []
-function setup() {
 
-    snake = [15, 29, 43, 57]
-    if (localStorage.getItem('highScore') === null) sessionStorage.setItem('highScore', 0)
+function pause() {
+    if (!paused) {
+        paused = true
+        let modal = document.createElement("div")
+        modal.id = "pause"
+        let pauseText = document.createElement("span")
+
+        let screenBottom = document.createElement("div")
+        screenBottom.classList.add('screen-bottom')
+        let red = document.createElement("div")
+        red.classList.add('red')
+        let white = document.createElement("div")
+        white.classList.add('white')
+        let green = document.createElement("div")
+        green.classList.add('green')
+
+        screenBottom.appendChild(red)
+        screenBottom.appendChild(white)
+        screenBottom.appendChild(green)
+
+
+        pauseText.textContent = "PAUSE"
+        pauseText.classList.add("pause-text")
+        modal.appendChild(pauseText)
+        modal.classList.add("pause")
+        modal.appendChild(screenBottom)
+        document.body.appendChild(modal)
+    } else {
+        paused = false
+
+        document.body.removeChild(document.getElementById("pause"))
+    }
+
+}
+function setup() {
+    if ((sessionStorage.getItem('highScore')) == null) sessionStorage.setItem('highScore', 0)
 
     highScore = sessionStorage.getItem('highScore')
+    console.log(highScore)
 
     document.addEventListener('keydown', function (e) {
-        if (e.key === "ArrowLeft") {
-            displacement = -side
-        } else if (e.key === "ArrowRight") {
-            displacement = side
-        } else if (e.key === "ArrowDown") {
-            displacement = 1
-        } else if (e.key === "ArrowUp") {
-            displacement = -1
+        if (e.key === "ArrowLeft" || e.key === "a") {
+            if (displacement != side) displacement = -side
+        } else if (e.key === "ArrowRight" || e.key === "d") {
+            if (displacement != -side) displacement = side
+        } else if (e.key === "ArrowDown" || e.key === "s") {
+            if (displacement != -1) displacement = 1
+        } else if (e.key === "ArrowUp" || e.key === "w") {
+            if (displacement != 1) displacement = -1
         } else if (e.key === "p") {
-            paused = !paused
+            pause(paused)
         }
     })
 
-    setUpGrid(2, 60)
-    side = 60 / 2
+    setUpGrid(4, 80)
+    side = 80 / 4
     for (let i = 0; i < side * side; i++)
         cells[i] = document.getElementById("square" + i)
 
     updateSnake(snake)
 
-    let str = "linear-gradient(0.25turn," + Array(sequence.length).fill("hsl(0,100%,50%)").toLocaleString() + ")"
+    let str = "linear-gradient(0.25turn,#a0fff0,#a0efff)"
     document.body.style.background = str
 
 
 }
 
 function loop() {
-    // var loop = setInterval(() => {
-    //     if (!paused) {
-    //         if (lives > 0) {
-    //             updateGame()
-    //             move(displacement)
-    //         } else if (lives === 0) {
-    //             console.log("you lost!")
-    //             // grow(false)
-    //             clearInterval(loop)
-    //         }
-    //     } else {
-    //         return;
-    //     }
-    // }, Math.floor(100 * (1-currentTime/defaultTime)));
     function updateLoop(timeout) {
         if (!paused) {
             if (lives > 0) {
@@ -189,17 +209,18 @@ function loop() {
                 move(displacement)
             } else if (lives === 0) {
                 console.log("you lost!")
-                // grow(false)
-                // clearInterval(timeout)
+                document.getElementById('die').play()
+                // die modal dialouge`
+
                 return;
             }
+
         } else {
-            return;
         }
 
-        setTimeout(updateLoop, Math.floor(100 * (1-currentTime/defaultTime)))
+        setTimeout(updateLoop, Math.floor(100 * (1 - currentTime / defaultTime)))
     }
-    setTimeout(updateLoop,100)
+    setTimeout(updateLoop, 100)
 
 
 }
@@ -207,12 +228,9 @@ function loop() {
 //movement 
 function move(displacement) {
     let collide = true
-    snake.forEach((i) => {
-        collide &= checkCollision(i, displacement)
-    })
+    collide = checkCollision(snake[0], displacement)
     if (!collide) {
-        // cells[snake[0]].innerText = ''
-        cells[snake[0]].innerText = cells[snake[0]].innerText.replace(":D", '')
+        cells[snake[0]].innerText = cells[snake[0]].innerText.replace("UwU", '')
         cells[snake[0]].classList.remove('head')
         const tail = snake.pop()
         cells[tail].classList.remove('snake')
@@ -220,11 +238,12 @@ function move(displacement) {
         cells[tail].innerText = ''
         snake.unshift((snake[0] + displacement))
         cells[snake[snake.length - 1]].classList.add('tail')
-        cells[snake[snake.length - 1]].innerHTML = '<span>(‿ˠ‿)</span>'
+        cells[snake[snake.length - 1]].innerHTML = '<span></span>'
 
         cells[snake[0]].classList.add('snake')
         cells[snake[0]].classList.add('head')
-        cells[snake[0]].innerHTML = '<span>:D</span>'
+
+        cells[snake[0]].innerHTML = '<span>UwU</span>'
     } else if (collide) {
         endgame()
     }
@@ -249,15 +268,22 @@ function checkCollision(coord, displacement) {
         console.log("wall collision")
         return true
     }
-    const grid = x * side + y
+    const grid = x * side + (y % side)
     if (sequence.includes(grid)) {
         console.log("block collision " + grid)
-        return blockCollided(grid)
+        let res = blockCollided(grid)
+        if (res === "block eaten") {
+            return false;
+        } else if (res === "sequence finished") {
+            return false;
+        } else if (res === "wrong sequence") {
+            return true;
+        }
     }
-    // if (snake.includes(grid)) {
-    //     console.log("snake collision")
-    //     return true
-    // }
+    if (snake.includes(grid)) {
+        console.log("snake collision")
+        return true
+    }
     return false
 }
 function blockCollided(i) {
@@ -268,25 +294,29 @@ function blockCollided(i) {
     console.log(i, last, sequence)
 
     if (i == last && sequence.length > 0) {
+
         cells[i].classList.add('square')
         cells[i].classList.remove('block')
         cells[i].style.background = ""
         cells[i].innerText = ''
 
-        grow(true)
+        // grow(true)
         let k = 0
         let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,50%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - color] + ",100%,50%)").toLocaleString() + ")"
-        document.body.classList.remove("transistion")
-        document.body.classList.add("transistion")
+        document.body.style.transition = 'background 2s ease-in-out'
         document.body.style.background = str
         sequencePrompt.removeChild(sequencePrompt.firstChild)
-        // increment bg 
 
-        return false;
+        //play eating audio
+        document.getElementById("eat").play()
+
+        return "block eaten";
     }
     else if (sequence.length === 0 && i == last) {
+        document.getElementById("eat").play()
         cells[i].classList.add('square')
         cells[i].classList.remove('block')
+        cells[i].style.background = ""
         cells[i].innerText = ''
 
         grow(true)
@@ -297,22 +327,25 @@ function blockCollided(i) {
 
         if (sequencePrompt.firstChild != null)
             sequencePrompt.removeChild(sequencePrompt.firstChild)
-        // increment bg 
+
+        //play eating audio
 
         sequenceFinsihed = true
         score++
-        defaultTime += 30000 //+30s
+        defaultTime += 50000 //+30s
         updateGame()
-        return false;
+        return "sequence finished";
     }
     else {
         console.log("wrong sequence")
         lives = 0
-        return true;
+        return "wrong sequence";
     }
 }
 function grow(grow) {
     if (grow) {
+        document.getElementById("grow").play()
+
         cells[snake[0]].innerText = ''
         cells[snake[0]].classList.remove('head')
         const tail = snake[snake.length - 1]
@@ -322,11 +355,11 @@ function grow(grow) {
         snake.unshift((snake[0] + displacement))
         cells[snake[snake.length - 1]].classList.add('tail')
         cells[snake[snake.length - 1]].classList.add('snake')
-        cells[snake[snake.length - 1]].innerText = '(‿ˠ‿)'
+        cells[snake[snake.length - 1]].innerText = ''
 
         cells[snake[0]].classList.add('snake')
         cells[snake[0]].classList.add('head')
-        cells[snake[0]].innerText = ':D'
+        cells[snake[0]].innerText = 'UwU'
     } else {
         cells[snake[0]].innerText = ''
         cells[snake[0]].classList.remove('head')
@@ -342,20 +375,25 @@ function grow(grow) {
         snake.unshift((snake[0] + displacement))
         cells[snake[snake.length - 1]].classList.add('tail')
         cells[snake[snake.length - 1]].classList.add('snake')
-        cells[snake[snake.length - 1]].innerText = '(‿ˠ‿)'
+        cells[snake[snake.length - 1]].innerText = ''
 
         cells[snake[0]].classList.add('snake')
         cells[snake[0]].classList.add('head')
-        cells[snake[0]].innerText = ':D'
+        cells[snake[0]].innerText = 'UwU'
     }
 }
 
 function endgame() {
-    lives--;
+    lives--
+    document.getElementById('damage').play()
+    updateSnake()
     displacement = 1
     if (lives > 0) {
-        if (score > highScore) sessionStorage.setItem("highScore", highScore)
+        if (score > highScore) highScore = score
+        sessionStorage.setItem("highScore", highScore)
     } else if (lives == 0) {
+        if (score > highScore) highScore = score
+        sessionStorage.setItem("highScore", highScore)
         return;
     }
 }
