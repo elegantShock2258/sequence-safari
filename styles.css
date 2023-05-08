@@ -2,6 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
+@font-face {
+    font-family: "IntroScript";
+    src: url("Assets/Fonts/IntroScript/IntroScript/Non-commercial/TTF/IntroScript-Trial-Black.ttf") format("truetype");
+}
+
 html {
     box-sizing: border-box;
     padding: 0px;
@@ -18,6 +23,12 @@ html {
 body {
     width: 100vw;
     height: 100vh;
+
+    image-rendering: pixelated;
+}
+
+.game {
+    z-index: 2;
 }
 
 .bar {
@@ -33,11 +44,16 @@ body {
     background-color: red;
 }
 
+.top {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+}
+
 .nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0;
     padding: 0.25%;
 
     font-family: 'Bebas Neue';
@@ -135,21 +151,100 @@ body {
 }
 
 .modal {
-    z-index: 1;
-    display: none;
+    z-index: 3;
+    display: flex;
     position: fixed;
     left: 0;
     top: 0;
     width: 100vw !important;
     height: 100vh !important;
-    background-color: rgb(0, 0, 0, 0.4);
-    backdrop-filter: blur(40px);
+
+    background-color: rgb(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+
+    justify-content: center;
+    align-items: center;
+
+}
+
+.uiDev {
+    height: 60%;
+    width: 100%;
 
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 5%;
+}
+
+.modalSelect {
+    width: 100%;
+    height: 4vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'Press Start 2P';
+    color: white;
+}
+
+.modalSelectText {
+    font-weight: bolder;
+    font-size: larger;
+
+    /* animation: selectText 0.5s cubic-bezier(1, 0, 0, 1) infinite;
+    animation: cursorSelection 0.2s cubic-bezier(1, 0, 0, 1); */
+}
+
+@keyframes cursorSelection {
+    0%{
+        width:0%;
+    }
+}
+@keyframes credits {
+    100%{
+        color: #171DA8;
+    }
+}
+@keyframes selectText {
+    0% {
+        color: #171DA8;
+        background-color:#ffffff;
+    }
+
+    100%{
+        color:black;
+    }
+}
+
+
+.dialogueLayout {
+    width: 75vw;
+    height: 75vh;
+    background-color: #171DA8;
+    border-radius: 10px;
+    border: 3px solid #30303080;
+
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    font-family: 'Press Start 2P';
+    color: white;
+    text-shadow: 1px 3px green, -2px -3px red;
+
+    font-size: 5rem;
+
+    margin: 10px;
+    padding: 3px;
 }
 
 .pause {
-    z-index: 1;
+    z-index: 3;
     display: none;
     position: fixed;
     left: 0;

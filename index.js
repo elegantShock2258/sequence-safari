@@ -45,6 +45,7 @@ let score = 0
 let highScore = 0
 let lives = 3
 
+let initialised = false
 let paused = false
 
 //update game
@@ -134,6 +135,75 @@ let displacement = 1
 
 let snake = []
 
+
+let modal = ""
+let startText = ""
+let settings = ""
+function initialSetup() {
+    paused = true
+
+    modal = document.createElement("div")
+    modal.classList.add('modal')
+    modal.id = "startup"
+
+    let mainlayout = document.createElement("div")
+    mainlayout.classList.add('dialogueLayout')
+
+
+    let h1_3  = document.createElement("h1")
+    h1_3.classList.add('modalSelect')
+    h1_3.textContent = "credits : 0 | insert credits" 
+    h1_3.style.fontSize = "1em" 
+    h1_3.style.textShadow = "none"
+    h1_3.style.animation = "credits 0.7s infinite cubic-bezier(1,0,0,1)" 
+
+    let h1 = document.createElement("h1")
+    h1.textContent = "Sequence"
+    let h1_2 = document.createElement("h1")
+    h1_2.textContent = "Safari"
+    h1_2.style.alignSelf = "flex-end"
+
+    let uiDiv = document.createElement("div")
+    uiDiv.classList.add('uiDev')
+
+    startText = document.createElement("div")
+    startText.classList.add('modalSelect')
+    startText.classList.add('modalSelectText')
+
+    startText.textContent = "Start Game"
+
+    settings = document.createElement("div")
+    settings.classList.add('modalSelect')
+    settings.textContent = "Quit"
+
+    let highScoreEle = document.createElement("div")
+    highScoreEle.classList.add('modalSelect')
+    highScoreEle.style.fontSize = "1em" 
+    highScoreEle.style.textShadow = ""
+    highScoreEle.textContent = "High Score: " + highScore
+    highScoreEle.style.marginBottom= "10%"
+
+    option = 0
+
+    settings.textContent = "Quit"
+    settings.style.animation = "none"
+    startText.textContent = ">  Start Game"
+    startText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+
+
+
+    uiDiv.appendChild(startText)
+    uiDiv.appendChild(settings)
+    mainlayout.appendChild(h1)
+    mainlayout.appendChild(h1_2)
+    mainlayout.appendChild(h1_3)
+    mainlayout.appendChild(uiDiv)
+    mainlayout.appendChild(highScoreEle)
+    modal.appendChild(mainlayout)
+
+    document.body.appendChild(modal)
+
+}
 function pause() {
     if (!paused) {
         paused = true
@@ -154,12 +224,13 @@ function pause() {
         screenBottom.appendChild(white)
         screenBottom.appendChild(green)
 
-
         pauseText.textContent = "PAUSE"
         pauseText.classList.add("pause-text")
+
         modal.appendChild(pauseText)
         modal.classList.add("pause")
         modal.appendChild(screenBottom)
+
         document.body.appendChild(modal)
     } else {
         paused = false
@@ -169,10 +240,12 @@ function pause() {
 
 }
 function setup() {
+    // paused = true
     if ((sessionStorage.getItem('highScore')) == null) sessionStorage.setItem('highScore', 0)
 
     highScore = sessionStorage.getItem('highScore')
     console.log(highScore)
+    initialSetup()
 
     document.addEventListener('keydown', function (e) {
         if (e.key === "ArrowLeft" || e.key === "a") {
@@ -180,11 +253,36 @@ function setup() {
         } else if (e.key === "ArrowRight" || e.key === "d") {
             if (displacement != -side) displacement = side
         } else if (e.key === "ArrowDown" || e.key === "s") {
+            if (!initialised) {
+                option = 1
+
+                startText.textContent = "Start Game"
+                startText.style.animation = "none"
+                settings.textContent = ">    Quit"
+                settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+            }
             if (displacement != -1) displacement = 1
         } else if (e.key === "ArrowUp" || e.key === "w") {
+            if (!initialised) {
+                option = 0
+
+                settings.textContent = "Quit"
+                settings.style.animation = "none"
+                startText.textContent = ">  Start Game"
+                startText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+
+            }
             if (displacement != 1) displacement = -1
         } else if (e.key === "p") {
             pause(paused)
+        } else if (e.key === "Enter") {
+            if (!initialised) {
+                if (option == 0) {
+
+                } else {
+
+                }
+            }
         }
     })
 
@@ -195,7 +293,7 @@ function setup() {
 
     updateSnake(snake)
 
-    let str = "linear-gradient(0.25turn,#a0fff0,#a0efff)"
+    let str = "linear-gradient(0.25turn,#300350,#94167f)"
     document.body.style.background = str
 
 
