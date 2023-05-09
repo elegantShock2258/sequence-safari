@@ -290,6 +290,7 @@ function gameLost(message) {
     mainlayout.appendChild(uiDiv)
     mainlayout.appendChild(highScoreEle)
     modal.appendChild(mainlayout)
+    modal.onclick = () => { location.reload() }
 
     document.body.appendChild(modal)
 
