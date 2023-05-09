@@ -144,7 +144,7 @@ let settings = ""
 
 function initialSetup() {
     paused = true
-
+    console.log("hi ayush!")
     modal = document.createElement("div")
     modal.classList.add('modal')
     modal.id = "startup"
