@@ -231,7 +231,7 @@ function initialSetup() {
 
     document.body.appendChild(modal)
 
-
+    initialised = true
 }
 
 function gameLost(message) {
