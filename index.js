@@ -117,7 +117,8 @@ function setUpGrid(width = 10, sqaureWidth = 80) {
 
 // snake
 function updateSnake(first = false) {
-    if (first) snake = [0, side, 2 * side, 3 * side]
+    if (first) snake = [0, 0, 0, 0]
+
     snake.forEach((i) => {
         cells[i].classList.add('snake')
     })
@@ -144,7 +145,6 @@ let settings = ""
 
 function initialSetup() {
     paused = true
-    console.log("hi ayush!")
     modal = document.createElement("div")
     modal.classList.add('modal')
     modal.id = "startup"
@@ -397,7 +397,7 @@ function setup() {
     let size = Math.round(playground.clientWidth * 100 / window.innerHeight)
     console.log(size)
     setUpGrid(4, size)
-    side = size / 4
+    side = Math.floor(size / 4)
     for (let i = 0; i < side * side; i++)
         cells[i] = document.getElementById("square" + i)
 
