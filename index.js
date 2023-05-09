@@ -220,6 +220,7 @@ function initialSetup() {
 
         window.close()
     })
+
     uiDiv.appendChild(lostText)
     uiDiv.appendChild(settings)
     mainlayout.appendChild(h1)
@@ -230,8 +231,6 @@ function initialSetup() {
     modal.appendChild(mainlayout)
 
     document.body.appendChild(modal)
-
-    initialised = true
 }
 
 function gameLost(message) {
@@ -338,7 +337,7 @@ function setup() {
 
     highScore = sessionStorage.getItem('highScore')
     console.log(highScore)
-    if (!initialised) initialSetup()
+    initialSetup()
     // gameLost("You Collided with a wall!")
     document.getElementById("leftBtn").onclick = function () {
         if (displacement != side) displacement = -side
@@ -352,22 +351,11 @@ function setup() {
     document.getElementById("downBtn").onclick = function () {
         if (displacement != -1) displacement = 1
     }
+
     document.addEventListener('keydown', function (e) {
         if (e.key === "ArrowLeft" || e.key === "a") {
             if (displacement != side) displacement = -side
-            document.getElementById("downBtn").style.animation = ""
-            document.getElementById("upBtn").style.animation = ""
-            document.getElementById("leftBtn").style.animation = ""
-            document.getElementById("rightBtn").style.animation = ""
-
-            document.getElementById("leftBtn").style.animation = "buttonClicked 0.4s ease-in-out "
         } else if (e.key === "ArrowRight" || e.key === "d") {
-            document.getElementById("downBtn").style.animation = ""
-            document.getElementById("upBtn").style.animation = ""
-            document.getElementById("leftBtn").style.animation = ""
-            document.getElementById("rightBtn").style.animation = ""
-
-            document.getElementById("rightBtn").style.animation = "buttonClicked 0.4s ease-in-out"
             if (displacement != -side) displacement = side
         } else if (e.key === "ArrowDown" || e.key === "s") {
             if (!initialised) {
@@ -377,15 +365,8 @@ function setup() {
                 lostText.style.animation = "none"
                 settings.textContent = ">    Quit"
                 settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
-            } else {
-                document.getElementById("leftBtn").style.animation = ""
-                document.getElementById("rightBtn").style.animation = ""
-                document.getElementById("downBtn").style.animation = ""
-                document.getElementById("upBtn").style.animation = ""
-
-                document.getElementById("downBtn").style.animation = "buttonClicked 0.4s ease-in-out"
-                if (displacement != -1) displacement = 1
             }
+            if (displacement != -1) displacement = 1
         } else if (e.key === "ArrowUp" || e.key === "w") {
             if (!initialised) {
                 option = 0
@@ -394,21 +375,15 @@ function setup() {
                 settings.style.animation = "none"
                 lostText.textContent = ">  Start Game"
                 lostText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
-
-            } else {
-                document.getElementById("leftBtn").style.animation = ""
-                document.getElementById("rightBtn").style.animation = ""
-                document.getElementById("downBtn").style.animation = ""
-
-                document.getElementById("upBtn").style.transistion = "buttonClicked 0.4s ease-in-out"
-                if (displacement != 1) displacement = -1
             }
+            if (displacement != 1) displacement = -1
         } else if (e.key === "p") {
             pause(paused)
         } else if (e.key === "Enter") {
             if (!initialised) {
                 if (option == 0) {
                     document.body.removeChild(modal)
+                    initialised = true
                     paused = false
                 } else if (option == 23) {
                     this.location.reload()
