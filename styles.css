@@ -156,8 +156,9 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    width: 100vw !important;
-    height: 100vh !important;
+
+    width: 100vw;
+    height: 100vh;
 
     background-color: rgb(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
@@ -200,29 +201,31 @@ body {
 }
 
 @keyframes cursorSelection {
-    0%{
-        width:0%;
+    0% {
+        width: 0%;
     }
 }
+
 @keyframes credits {
-    100%{
+    100% {
         color: #171DA8;
     }
 }
+
 @keyframes selectText {
     0% {
         color: #171DA8;
-        background-color:#ffffff;
+        background-color: #ffffff;
     }
 
-    100%{
-        color:black;
+    100% {
+        color: black;
     }
 }
 
 
 .dialogueLayout {
-    width: 75vw;
+    width: 85vh;
     height: 75vh;
     background-color: #171DA8;
     border-radius: 10px;
@@ -231,8 +234,9 @@ body {
     display: flex;
     flex-direction: column;
 }
+
 .dialogueLayoutLost {
-    width: 75vw;
+    width: 85vh;
     height: 75vh;
     background-color: red;
     border-radius: 10px;
@@ -241,7 +245,8 @@ body {
     display: flex;
     flex-direction: column;
 }
-.youLostText{
+
+.youLostText {
     font-size: 4rem;
 }
 
@@ -255,6 +260,7 @@ h1 {
     margin: 10px;
     padding: 3px;
 }
+
 .h1Lost {
     font-family: 'Press Start 2P';
     color: white;
@@ -272,8 +278,8 @@ h1 {
     position: fixed;
     left: 0;
     top: 0;
-    width: 100vw !important;
-    height: 100vh !important;
+    width: 100vw;
+    height: 100vh;
     /* backdrop-filter: blur(30px); */
     background: #171DA8f0;
 
@@ -290,7 +296,7 @@ h1 {
 
     font-family: 'Press Start 2P', cursive;
     color: #ffffff;
-    font-size: 8rem;
+    font-size: 580%;
 
     padding: 10px;
     filter: blur(3px);
@@ -349,6 +355,45 @@ h1 {
     top: 0;
     left: 0;
     height: 0.5vh;
+}
+
+.buttons {
+    z-index: 3;
+    text-align: center;
+
+    position: absolute;
+    bottom: 30vh;
+    left: 10vw;
+    margin-bottom: 10px;
+    border-radius: 10px;
+
+
+    width: fit-content;
+}
+
+
+
+.upBtnImage,
+.downBtnImage,
+.leftBtnImage,
+.rightBtnImage,
+.upBtn,
+.downBtn {
+    height: 9vh;
+    padding: 0;
+    margin: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.rightBtnImage {
+    margin-left: 3vw;
+}
+
+@keyframes buttonClicked {
+    58% {
+        filter: hue-rotate(90deg);
+    }
 }
 
 @keyframes track {
@@ -473,4 +518,73 @@ h1 {
     88% {
         bottom: 0;
     }
+}
+
+@media screen and (width <=80vh) and (width >=40vh) {
+    .playground {
+        width: 40vh;
+        height: 40vh;
+    }
+
+    .buttons {
+        bottom: 0;
+    }
+
+    br {
+        display: none;
+    }
+
+    .upBtnImage,
+    .downBtnImage,
+    .leftBtnImage,
+    .rightBtnImage,
+    .upBtn,
+    .downBtn {
+        height: 9vh;
+        padding: 0;
+        margin: 0;
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    .top {
+        height: 8vh;
+    }
+
+    .sequencePrompt {
+        margin-top: 8vh;
+    }
+
+    .prompt {
+        padding: 10px;
+    }
+
+    .modal,
+    .pause {
+        width: 100%;
+        height: 100%;
+    }
+
+    .pause {
+        font-size: 65%;
+    }
+
+    .dialogueLayout ,.dialogueLayoutLost{
+        width: 85%;
+        height: 85%;
+
+    }
+
+    h1 ,.h1Lost{
+        font-size: 165%;
+    }
+
+    .youLostText{
+        font-size: 230%;
+    }
+
+    .modalSelect{
+        margin-top: 30%;
+    }
+
 }

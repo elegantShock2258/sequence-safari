@@ -117,7 +117,7 @@ function setUpGrid(width = 10, sqaureWidth = 80) {
 
 // snake
 function updateSnake(first = false) {
-    if (first) snake = [15, 29, 43, 57]
+    if (first) snake = [0, side, 2 * side, 3 * side]
     snake.forEach((i) => {
         cells[i].classList.add('snake')
     })
@@ -195,6 +195,15 @@ function initialSetup() {
 
 
 
+    lostText.onclick = () => {
+        document.body.removeChild(modal)
+        paused = false
+
+    }
+
+    settings.onclick = () => {
+        window.close()
+    }
     uiDiv.appendChild(lostText)
     uiDiv.appendChild(settings)
     mainlayout.appendChild(h1)
@@ -205,6 +214,7 @@ function initialSetup() {
     modal.appendChild(mainlayout)
 
     document.body.appendChild(modal)
+
 
 }
 
@@ -271,10 +281,6 @@ function gameLost(message) {
 }
 
 
-
-
-
-
 function pause() {
     if (!paused) {
         paused = true
@@ -316,13 +322,36 @@ function setup() {
 
     highScore = sessionStorage.getItem('highScore')
     console.log(highScore)
-    initialSetup()
+    if (!initialised) initialSetup()
     // gameLost("You Collided with a wall!")
-
+    document.getElementById("leftBtn").onclick = function () {
+        if (displacement != side) displacement = -side
+    }
+    document.getElementById("rightBtn").onclick = function () {
+        if (displacement != -side) displacement = side
+    }
+    document.getElementById("upBtn").onclick = function () {
+        if (displacement != 1) displacement = -1
+    }
+    document.getElementById("downBtn").onclick = function () {
+        if (displacement != -1) displacement = 1
+    }
     document.addEventListener('keydown', function (e) {
         if (e.key === "ArrowLeft" || e.key === "a") {
             if (displacement != side) displacement = -side
+            document.getElementById("downBtn").style.animation = ""
+            document.getElementById("upBtn").style.animation = ""
+            document.getElementById("leftBtn").style.animation = ""
+            document.getElementById("rightBtn").style.animation = ""
+
+            document.getElementById("leftBtn").style.animation = "buttonClicked 0.4s ease-in-out "
         } else if (e.key === "ArrowRight" || e.key === "d") {
+            document.getElementById("downBtn").style.animation = ""
+            document.getElementById("upBtn").style.animation = ""
+            document.getElementById("leftBtn").style.animation = ""
+            document.getElementById("rightBtn").style.animation = ""
+
+            document.getElementById("rightBtn").style.animation = "buttonClicked 0.4s ease-in-out"
             if (displacement != -side) displacement = side
         } else if (e.key === "ArrowDown" || e.key === "s") {
             if (!initialised) {
@@ -332,8 +361,15 @@ function setup() {
                 lostText.style.animation = "none"
                 settings.textContent = ">    Quit"
                 settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+            } else {
+                document.getElementById("leftBtn").style.animation = ""
+                document.getElementById("rightBtn").style.animation = ""
+                document.getElementById("downBtn").style.animation = ""
+                document.getElementById("upBtn").style.animation = ""
+
+                document.getElementById("downBtn").style.animation = "buttonClicked 0.4s ease-in-out"
+                if (displacement != -1) displacement = 1
             }
-            if (displacement != -1) displacement = 1
         } else if (e.key === "ArrowUp" || e.key === "w") {
             if (!initialised) {
                 option = 0
@@ -343,8 +379,14 @@ function setup() {
                 lostText.textContent = ">  Start Game"
                 lostText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
 
+            } else {
+                document.getElementById("leftBtn").style.animation = ""
+                document.getElementById("rightBtn").style.animation = ""
+                document.getElementById("downBtn").style.animation = ""
+
+                document.getElementById("upBtn").style.transistion = "buttonClicked 0.4s ease-in-out"
+                if (displacement != 1) displacement = -1
             }
-            if (displacement != 1) displacement = -1
         } else if (e.key === "p") {
             pause(paused)
         } else if (e.key === "Enter") {
@@ -361,8 +403,10 @@ function setup() {
         }
     })
 
-    setUpGrid(4, 80)
-    side = 80 / 4
+    let size = Math.round(playground.clientWidth * 100 / window.innerHeight)
+    console.log(size)
+    setUpGrid(4, size)
+    side = size / 4
     for (let i = 0; i < side * side; i++)
         cells[i] = document.getElementById("square" + i)
 
@@ -571,10 +615,6 @@ function endgame() {
         return;
     }
 }
-// make a game manager to decide spawnning and handle background styleing and scores and save and pause
-// make moveAble to handle snake movement and anything
-
-
 
 
 setup()
