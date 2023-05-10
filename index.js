@@ -195,7 +195,8 @@ function initialSetup() {
 
 
 
-    lostText.addEventListener("touchstart", () => {
+    lostText.addEventListener("touchstart", (e) => {
+        e.preventDefault()
         option = 1
 
         lostText.textContent = "Start Game"
@@ -208,7 +209,8 @@ function initialSetup() {
         paused = false
 
     })
-    settings.addEventListener("touchstart", () => {
+    settings.addEventListener("touchstart", (e) => {
+        e.preventDefault()
         option = 0
 
         settings.textContent = "Quit"
