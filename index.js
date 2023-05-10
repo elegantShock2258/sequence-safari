@@ -195,15 +195,29 @@ function initialSetup() {
 
 
 
-    lostText.onclick = () => {
+    lostText.addEventListener("touchstart", () => {
+        option = 1
+
+        lostText.textContent = "Start Game"
+        lostText.style.animation = "none"
+        settings.textContent = ">    Quit"
+        settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+
+
         document.body.removeChild(modal)
         paused = false
 
-    }
+    })
+    settings.addEventListener("touchstart", () => {
+        option = 0
 
-    settings.onclick = () => {
+        settings.textContent = "Quit"
+        settings.style.animation = "none"
+        lostText.textContent = ">  Start Game"
+        lostText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+
         window.close()
-    }
+    })
     uiDiv.appendChild(lostText)
     uiDiv.appendChild(settings)
     mainlayout.appendChild(h1)
