@@ -520,7 +520,7 @@ h1 {
     }
 }
 
-@media screen and (width <=80vh) and (width >=40vh) {
+@media screen and (width <=80vh) and (width >=30vh) {
     .playground {
         width: 40vh;
         height: 40vh;
