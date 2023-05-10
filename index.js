@@ -28,7 +28,59 @@ let message = ""
 
 let initialised = false
 let paused = false
+
+let portalSprites = ["Assets/portal1.png", "Assets/portal2.png", "Assets/portal3.png", "Assets/portal4.png"]
 let portal = [] //start,end
+
+
+function setUpPortal() {
+    console.log("called")
+    let i = 0;
+    while (i != 2) {
+        let j = Math.floor(side * side * Math.random())
+
+        if (j in snake) {
+            console.log("got snake")
+            continue
+        }
+        else if (j in sequence) {
+            console.log("got sequence")
+            continue
+        }
+        else {
+            portal[i] = j
+            console.log(i,portal[i])
+            i++
+        }
+    }
+
+    // portal = [10, 40]
+}
+
+function updatePortal() {
+    console.log(portal)
+
+    cells[portal[0]].innerHTML = ""
+    let image = document.createElement("img")
+    image.src = portalSprites[currentTime % 4]
+    image.width = cells[portal[0]].clientHeight * 2
+
+    cells[portal[0]].appendChild(image)
+    cells[portal[0]].classList.add("square")
+    cells[portal[0]].classList.remove("snake")
+    cells[portal[0]].classList.remove("head")
+
+    cells[portal[1]].innerHTML = ""
+    let image1 = document.createElement("img")
+    image1.src = portalSprites[(currentTime + 1) % 4]
+    image1.width = cells[portal[1]].clientHeight * 2
+
+    cells[portal[1]].appendChild(image1)
+    cells[portal[1]].classList.add("square")
+    cells[portal[1]].classList.remove("snake")
+    cells[portal[1]].classList.remove("head")
+}
+
 //update game
 function generateSequence() {
     let i = 0;
@@ -63,7 +115,10 @@ function placeSequence() {
         sequencePrompt.appendChild(div)
     }
 }
+
 function updateGame() {
+
+
     currentTime += 75
     console.log(currentTime)
     if (sequenceFinsihed) {
@@ -72,12 +127,17 @@ function updateGame() {
         sequenceFinsihed = false
         console.log(sequence)
     }
+
     scoreEle.textContent = "Score: " + score
     document.getElementById("lives").textContent = "Lives: " + lives
     document.getElementById("highScore").textContent = "High Score: " + highScore
 
     barObject.style.width = `${currentTime * 100 / defaultTime}%`
     if (currentTime == defaultTime) endgame()
+
+
+    updatePortal()
+
 }
 
 // grid
@@ -127,6 +187,7 @@ function initialSetup() {
     modal = document.createElement("div")
     modal.classList.add('modal')
     modal.id = "startup"
+
 
     let mainlayout = document.createElement("div")
     mainlayout.classList.add('dialogueLayout')
@@ -310,7 +371,6 @@ function pause() {
 
 }
 function setup() {
-    // paused = true
     if ((sessionStorage.getItem('highScore')) == null) sessionStorage.setItem('highScore', 0)
 
     highScore = sessionStorage.getItem('highScore')
@@ -372,6 +432,8 @@ function setup() {
         }
     })
 
+
+
     let size = Math.round(playground.clientWidth * 100 / window.innerHeight)
     console.log(size)
     setUpGrid(4, size)
@@ -383,6 +445,10 @@ function setup() {
 
     let str = "linear-gradient(0.25turn,#300350,#94167f)"
     document.body.style.background = str
+
+
+    setUpPortal()
+    updatePortal()
 }
 
 function loop() {
@@ -395,8 +461,6 @@ function loop() {
                 console.log("you lost!")
                 document.getElementById('die').play()
                 gameLost()
-                // die modal dialouge`
-
                 return;
             }
 
@@ -457,7 +521,7 @@ function checkCollision(coord, displacement) {
         return true
     }
     const grid = x * side + (y % side)
-    if (sequence.includes(grid)) {
+    if (sequence.includes(grid) || sequence.includes(coord)) {
         console.log("block collision " + grid)
         return blockCollided(grid)
 
@@ -466,6 +530,17 @@ function checkCollision(coord, displacement) {
         console.log("snake collision")
         message = "You collided with yourself!"
         return true
+    } if (portal.includes(grid) || portal.includes(coord)) {
+        console.log("portal collision")
+
+        cells[snake[0]].classList.remove('head')
+        cells[snake[0]].classList.remove('snake')
+        cells[snake[0]].classList.add('square')
+        cells[snake[0]].innerText = ""
+        snake[0] = portal[(portal.indexOf(grid) + 1) % 2]
+
+
+        return false
     }
     return false
 }

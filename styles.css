@@ -54,7 +54,6 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.25%;
 
     font-family: 'Bebas Neue';
     font-size: xx-large;
@@ -112,7 +111,7 @@ body {
 }
 
 .head {
-    font-size: larger;
+    font-size: 0.8em;
 }
 
 .head,
@@ -120,13 +119,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+
     color: white;
-    font-family: 'Roboto Mono', Courier, monospace;
+    font-family: 'Press Start 2P', Courier, monospace;
 }
 
 
 .block {
-    font-family: 'Roboto Mono';
+    font-family: 'Press Start 2P';
     font-weight: bolder;
     border: 2px aliceblue solid;
     color: #303030;
@@ -134,18 +134,14 @@ body {
 
 .prompt {
     background-color: yellow;
-    padding: 1%;
+    padding: 0.6vw;
     font-size: larger;
     border-radius: 6px;
     margin: 1%;
-    font-family: 'Roboto Mono', Courier, monospace;
+    font-family: 'Press Start 2P', Courier, monospace;
 
     border: 2px solid black;
 }
-
-
-
-
 .overlay {
     backdrop-filter: blur(300px);
 }
@@ -247,7 +243,7 @@ body {
 }
 
 .youLostText {
-    font-size: 4rem;
+    font-size: 2.5rem;
 }
 
 h1 {
@@ -255,7 +251,7 @@ h1 {
     color: white;
     text-shadow: 1px 3px green, -2px -3px red;
 
-    font-size: 4.5em;
+    font-size: 3.5em;
 
     margin: 10px;
     padding: 3px;
@@ -266,7 +262,7 @@ h1 {
     color: white;
     text-shadow: 1px 3px green, -2px -3px blue;
 
-    font-size: 5rem;
+    font-size: 3.5rem;
 
     margin: 10px;
     padding: 3px;
