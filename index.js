@@ -4,27 +4,6 @@ let scoreEle = document.getElementById('score')
 let barObject = document.getElementById('barObject')
 let botScore = document.getElementById('botScore')
 let sequencePrompt = document.getElementById('sequencePrompt')
-// set up a mouse event listener to detect which direction its going
-// movement
-// let x0, y0 = 0
-// playground.addEventListener('mousemove', ((e) => {
-
-//     let delX = e.clientX - x0
-//     let delY = e.clientY - y0
-//     let epsilon = 180
-
-//     let delEffective = Math.max(Math.abs(delX), Math.abs(delY))
-//     if (delEffective == Math.abs(delX)) {
-//         if (delX > epsilon)  moveX() 
-//         else if (delX < epsilon) console.log("left")
-//     }
-//     else {
-//         if (delY > epsilon) console.log("down")
-//         else if (delY < epsilon) console.log("up")
-//     }
-//     x0 = e.clientX
-//     y0 = e.clientY
-// }))
 
 let blocks = []
 
@@ -49,7 +28,7 @@ let message = ""
 
 let initialised = false
 let paused = false
-
+let portal = [] //start,end
 //update game
 function generateSequence() {
     let i = 0;
@@ -192,8 +171,6 @@ function initialSetup() {
     settings.style.animation = "none"
     lostText.textContent = ">  Start Game"
     lostText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
-
-
 
     lostText.addEventListener("touchstart", (e) => {
         e.preventDefault()
@@ -406,8 +383,6 @@ function setup() {
 
     let str = "linear-gradient(0.25turn,#300350,#94167f)"
     document.body.style.background = str
-
-
 }
 
 function loop() {
@@ -460,6 +435,7 @@ function move(displacement) {
 
     return collide;
 }
+
 function checkCollision(coord, displacement) {
     let y0 = Math.floor(coord % side)
     let x0 = Math.floor(coord / side)
