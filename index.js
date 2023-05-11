@@ -554,16 +554,6 @@ function setup() {
                 }
             }
         }
-        if (e.key === "ArrowLeft" || e.key === "a") {
-            move(-side)
-        } else if (e.key === "ArrowRight" || e.key === "d") {
-            move(side)
-        } else if (e.key === "ArrowDown" || e.key === "s") {
-            move(1)
-        } else if (e.key === "ArrowUp" || e.key === "w") {
-            move(-1)
-        }
-
     })
 
 
@@ -624,7 +614,6 @@ function loop() {
                 return;
             }
 
-            paused = true
         } else {
         }
 
@@ -828,6 +817,10 @@ function endgame() {
         sessionStorage.setItem("highScore", highScore)
         playground.classList.remove('playground-damage')
         playground.classList.add('playground-damage')
+
+        setTimeout(() => {
+            playground.classList.remove('playground-damage')
+        }, 300)
     } else if (lives == 0) {
         if (score > highScore) highScore = score
         sessionStorage.setItem("highScore", highScore)

@@ -91,7 +91,7 @@ body {
     transform: translate(-50%, -40%);
 
 
-    transition: background-color 0.3s ease-in-out reverse;
+    transition: background-color 0.3s ease-in-out;
 }
 
 .playground-freeze {
@@ -100,8 +100,8 @@ body {
 }
 
 .playground-damage {
-    transition: background-color 0.3s ease-in-out reverse;
-    background-color: red;
+    transition: background-color 0.3s ease-in-out ;
+    background-color: #ff0000e0;
 }
 
 .square {
