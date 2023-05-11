@@ -76,22 +76,41 @@ let powerUpMethod = [() => {
     // by thomas mampalli 106122129 put him delta sysad
     let blocksEaten = Math.floor((sequence.length - 3) * Math.random())
     if (blocksEaten == 0) blocksEaten = 1
-    if (sequence.length != 2) {
+    if (sequence.length != blocksEaten) {
         console.log(sequence, blocksEaten)
-        for (let i = 0; i < blocksEaten; i++) {
-            let tail = sequence.pop()
+        for (let j = 0; j < blocksEaten; j++) {
+            let i = sequence[j]
+            let color = sequenceBackup.indexOf(sequence[j])
+            let last = sequence.pop()
 
-            cells[tail].classList.remove('block')
-            cells[tail].classList.add('square')
-            cells[tail].innerText = ''
-            cells[tail].style.background = ''
-            cells[tail].innerHTML = ''
+            console.log(i, last, sequence)
+
+
+            cells[last].classList.add('square')
+            cells[last].classList.remove('block')
+            cells[last].style.background = ""
+            cells[last].innerText = ''
 
             let k = 0
-            let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - i)).map((e) => "hsl(" + e + ",100%,50%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - i] + ",100%,50%)").toLocaleString() + ")"
+            let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,50%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - color] + ",100%,50%)").toLocaleString() + ")"
             document.body.style.transition = 'background 2s ease-in-out'
             document.body.style.background = str
             sequencePrompt.removeChild(sequencePrompt.firstChild)
+
+
+            // let tail = sequence.pop()
+
+            // cells[tail].classList.remove('block')
+            // cells[tail].classList.add('square')
+            // cells[tail].innerText = ''
+            // cells[tail].style.background = ''
+            // cells[tail].innerHTML = ''
+
+            // let k = 0
+            // let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - i)).map((e) => "hsl(" + e + ",100%,50%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - i] + ",100%,50%)").toLocaleString() + ")"
+            // document.body.style.transition = 'background 2s ease-in-out'
+            // document.body.style.background = str
+            // sequencePrompt.removeChild(sequencePrompt.firstChild)
         }
     }
     console.log(sequence)
@@ -172,7 +191,6 @@ function generateSequence() {
             i++
         }
     }
-    sequence = [0]
     sequenceBackup = sequence
 
 }
@@ -222,7 +240,7 @@ function updateGame() {
 
     if (sequenceFinsihed) {
         generateSequence()
-        // placeSequence()
+        placeSequence()
         sequenceFinsihed = false
         console.log(sequence)
 
@@ -480,7 +498,6 @@ function setup() {
     highScore = sessionStorage.getItem('highScore')
     console.log(highScore)
     // initialSetup()
-    // paused = true
     initialised = true
     // gameLost("You Collided with a wall!")
     document.getElementById("leftBtn").onclick = function () {
@@ -494,6 +511,7 @@ function setup() {
     }
     document.getElementById("downBtn").onclick = function () {
         if (displacement != -1) displacement = 1
+
     }
 
     document.addEventListener('keydown', function (e) {
@@ -536,6 +554,16 @@ function setup() {
                 }
             }
         }
+        if (e.key === "ArrowLeft" || e.key === "a") {
+            move(-side)
+        } else if (e.key === "ArrowRight" || e.key === "d") {
+            move(side)
+        } else if (e.key === "ArrowDown" || e.key === "s") {
+            move(1)
+        } else if (e.key === "ArrowUp" || e.key === "w") {
+            move(-1)
+        }
+
     })
 
 
@@ -596,6 +624,7 @@ function loop() {
                 return;
             }
 
+            paused = true
         } else {
         }
 
@@ -654,7 +683,7 @@ function checkCollision(coord, displacement) {
     }
     const grid = x * side + (y % side)
 
-    if (sequence.includes(coord) || sequence.includes(coord)) {
+    if (sequence.includes(grid)) {
         console.log("block collision " + grid)
         return blockCollided(grid)
 
@@ -697,7 +726,6 @@ function blockCollided(i) {
     let last = sequence.pop()
 
     console.log(i, last, sequence)
-
     if (i == last && sequence.length > 0) {
 
         cells[i].classList.add('square')
@@ -798,6 +826,8 @@ function endgame() {
     if (lives > 0) {
         if (score > highScore) highScore = score
         sessionStorage.setItem("highScore", highScore)
+        playground.classList.remove('playground-damage')
+        playground.classList.add('playground-damage')
     } else if (lives == 0) {
         if (score > highScore) highScore = score
         sessionStorage.setItem("highScore", highScore)
