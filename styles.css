@@ -89,6 +89,14 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -40%);
+
+
+    transition: background-color 0.3s ease-in-out;
+}
+
+.playground-freeze {
+    transition: background-color 0.3s ease-in-out;
+    background-color: #101010;
 }
 
 
@@ -144,6 +152,7 @@ body {
 
     border: 2px solid black;
 }
+
 .overlay {
     backdrop-filter: blur(300px);
 }
@@ -567,21 +576,23 @@ h1 {
         font-size: 65%;
     }
 
-    .dialogueLayout ,.dialogueLayoutLost{
+    .dialogueLayout,
+    .dialogueLayoutLost {
         width: 85%;
         height: 85%;
 
     }
 
-    h1 ,.h1Lost{
+    h1,
+    .h1Lost {
         font-size: 165%;
     }
 
-    .youLostText{
+    .youLostText {
         font-size: 230%;
     }
 
-    .modalSelect{
+    .modalSelect {
         margin-top: 30%;
     }
 

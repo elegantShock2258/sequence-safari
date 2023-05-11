@@ -38,7 +38,7 @@ let slider = []
 let randomNumber = Math.random()
 // powerups: shrink, life, time, freeze time ,removeSomeBlocks
 
-let powerUps = ["Assets/compressPixelated.png", "Assets/heart.png", "Assets/clock.webp", "Assets/clock.webp", "you shouldnt be using this"]
+let powerUps = ["Assets/compressPixelated.png", "Assets/heart.png", "Assets/clock.webp", "Assets/pause.png", "Assets/qmark.png"]
 let powerUpCoords = []
 let powerUpCoordBackup = []
 let powerUpsNum = []
@@ -55,6 +55,8 @@ let powerUpMethod = [() => {
     defaultTime += 1500
 }, () => {
     paused = true
+    playground.classList.remove("playground-freeze")
+    playground.classList.add("playground-freeze")
     document.addEventListener('keydown', function (e) {
         if (e.key === "ArrowLeft" || e.key === "a") {
             move(-side)
@@ -66,7 +68,10 @@ let powerUpMethod = [() => {
             move(-1)
         }
     })
-    setTimeout(() => { paused = false }, 5000)
+    let t = setTimeout(() => {
+        paused = false
+        playground.classList.remove("playground-freeze")
+    }, 5000)
 }, () => {
     // by thomas mampalli 106122129 put him delta sysad
     let blocksEaten = Math.floor((sequence.length - 3) * Math.random())
@@ -197,26 +202,24 @@ function placePowerUps() {
     //placing powerups
     let i = 0
     while (i != numberOfPowerUps) {
-        let coordinate = Math.floor(side *side*Math.random() )
+        let coordinate = Math.floor(side * side * Math.random())
 
-            powerUpCoords.push(coordinate)
-            // cells[coordinate].classList.add(powerUpsClasses[powerUps[i]])
+        powerUpCoords.push(coordinate)
+        // cells[coordinate].classList.add(powerUpsClasses[powerUps[i]])
+        let image = document.createElement('img')
+        image.src = powerUps[powerUpsNum[i]]
+        console.log(powerUpsNum[i])
+        image.width = cells[coordinate].clientHeight
+        cells[coordinate].appendChild(image)
 
-            let image = document.createElement('img')
-            image.src = powerUps[powerUpsNum[i]]
-            console.log(powerUpsNum[i])
-            image.width = cells[coordinate].clientHeight 
-            cells[coordinate].appendChild(image)
-
-
-            i++
+        i++
     }
 
     powerUpCoordBackup = powerUpCoords
 }
 
 function updateGame() {
-    
+
     if (sequenceFinsihed) {
         generateSequence()
         // placeSequence()
@@ -239,7 +242,7 @@ function updateGame() {
 
     barObject.style.width = `${currentTime * 100 / defaultTime}%`
     if (currentTime == defaultTime) endgame()
-    
+
     updatePortal()
 }
 
@@ -661,14 +664,15 @@ function checkCollision(coord, displacement) {
         message = "You collided with yourself!"
         return true
     }
-    if(powerUpCoords.includes(coord)){
+    if (powerUpCoords.includes(coord)) {
         let index = powerUpCoordBackup.indexOf(coord)
-        console.log("power up: " + index)
-        console.log(powerUpCoords)
-        powerUpCoords = powerUpCoords.splice(index,1)
-        console.log(powerUpCoords)
-        powerUpMethod[powerUpsNum[index]]()
-        return false
+        if (index != -1) {
+            console.log("power up: " + index)
+            powerUpCoords = powerUpCoords.splice(powerUpCoords.indexOf(coord), 1)
+            console.log(powerUpCoords)
+            powerUpMethod[powerUpsNum[index]]()
+            return false
+        }
     }
 
     portals.forEach((portal) => {
