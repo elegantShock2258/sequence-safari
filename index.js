@@ -17,6 +17,7 @@ let colorDiff = 10
 
 let defaultTime = 50000 //50s
 let currentTime = 0
+let timeIncrement = 75
 
 let factor = 1
 
@@ -34,18 +35,79 @@ let portals = [] //start,end
 
 let slider = []
 
+let randomNumber = Math.random()
+// powerups: shrink, life, time, freeze time ,removeSomeBlocks
+
+let powerUps = ["Assets/compressPixels.png", "Assets/heart.png", "Assets/clock.webp", "Assets/clock.webp", "you shouldnt be using this"]
+let powerUpCoords = []
+let powerUpMethod = [() => {
+    if (snake.length != 1) {
+        const tail = snake.pop()
+        cells[tail].classList.remove('snake')
+        cells[tail].classList.remove('tail')
+        cells[tail].innerText = ''
+    }
+}, () => {
+    lives++
+}, () => {
+    defaultTime += 1500
+}, () => {
+    paused = true
+    document.addEventListener('keydown', function (e) {
+        if (e.key === "ArrowLeft" || e.key === "a") {
+            move(-side)
+        } else if (e.key === "ArrowRight" || e.key === "d") {
+            move(side)
+        } else if (e.key === "ArrowDown" || e.key === "s") {
+            move(1)
+        } else if (e.key === "ArrowUp" || e.key === "w") {
+            move(-1)
+        }
+    })
+    setTimeout(() => { paused = false }, 5000)
+}, () => {
+    // by thomas mampalli 106122129 put him delta sysad
+    let blocksEaten = Math.floor((sequence.length - 3) * Math.random())
+    if (blocksEaten == 0) blocksEaten = 1
+    if (sequence.length != 2) {
+        console.log(sequence, blocksEaten)
+        for (let i = 0; i < blocksEaten; i++) {
+            let tail = sequence.pop()
+
+            cells[tail].classList.remove('block')
+            cells[tail].classList.add('square')
+            cells[tail].innerText = ''
+            cells[tail].style.background = ''
+            cells[tail].innerHTML = ''
+
+            let k = 0
+            let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - i)).map((e) => "hsl(" + e + ",100%,50%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - i] + ",100%,50%)").toLocaleString() + ")"
+            document.body.style.transition = 'background 2s ease-in-out'
+            document.body.style.background = str
+            sequencePrompt.removeChild(sequencePrompt.firstChild)
+        }
+    }
+    console.log(sequence)
+}
+]
+
 function setUpPortal() {
     console.log("called")
     let i = 0;
     let obj = []
+
+    console.log(snake)
+    console.log(sequence)
+
     while (i != 2) {
         let j = Math.floor(side * side * Math.random())
 
-        if (j in snake) {
+
+        if (snake.includes(j)) {
             console.log("got snake")
             continue
         }
-        else if (j in sequence) {
+        else if (sequence.includes(j)) {
             console.log("got sequence")
             continue
         }
@@ -57,8 +119,6 @@ function setUpPortal() {
     }
 
     portals.push(obj)
-
-    // portal = [10, 40]
 }
 
 function updatePortal() {
@@ -126,13 +186,20 @@ function placeSequence() {
 }
 
 function updateGame() {
-    currentTime += 75
+    currentTime += timeIncrement
     console.log(currentTime)
     if (sequenceFinsihed) {
         generateSequence()
         placeSequence()
         sequenceFinsihed = false
         console.log(sequence)
+
+        for (let i = 0; i < 3 * Math.random(); i++) {
+            setUpPortal()
+            updatePortal()
+        }
+
+        placePowerUps()
     }
 
     scoreEle.textContent = "Score: " + score
@@ -141,6 +208,7 @@ function updateGame() {
 
     barObject.style.width = `${currentTime * 100 / defaultTime}%`
     if (currentTime == defaultTime) endgame()
+
     updatePortal()
 }
 
@@ -160,7 +228,7 @@ function setUpGrid(width = 10, sqaureWidth = 80) {
 
 // snake
 function updateSnake(first = false) {
-    if (first) snake = [0, 0, 0, 0]
+    if (first) snake = [6, 5, 4, 3]
 
     snake.forEach((i) => {
         cells[i].classList.add('snake')
@@ -451,12 +519,6 @@ function setup() {
     document.body.style.background = str
 
 
-    setUpPortal()
-    updatePortal()
-    setUpPortal()
-    updatePortal()
-    setUpPortal()
-    updatePortal()
 
 
 

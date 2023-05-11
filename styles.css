@@ -106,7 +106,7 @@ body {
 }
 
 .snake {
-    background-color: green;
+    background-color: #00ff00f0;
     border: 2px transparent solid;
 }
 
@@ -130,7 +130,9 @@ body {
     font-weight: bolder;
     border: 2px aliceblue solid;
     color: #303030;
+
 }
+
 
 .prompt {
     background-color: yellow;
