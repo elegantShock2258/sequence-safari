@@ -38,8 +38,10 @@ let slider = []
 let randomNumber = Math.random()
 // powerups: shrink, life, time, freeze time ,removeSomeBlocks
 
-let powerUps = ["Assets/compressPixels.png", "Assets/heart.png", "Assets/clock.webp", "Assets/clock.webp", "you shouldnt be using this"]
+let powerUps = ["Assets/compressPixelated.png", "Assets/heart.png", "Assets/clock.webp", "Assets/clock.webp", "you shouldnt be using this"]
 let powerUpCoords = []
+let powerUpCoordBackup = []
+let powerUpsNum = []
 let powerUpMethod = [() => {
     if (snake.length != 1) {
         const tail = snake.pop()
@@ -92,12 +94,12 @@ let powerUpMethod = [() => {
 ]
 
 function setUpPortal() {
-    console.log("called")
+    // console.log("called")
     let i = 0;
     let obj = []
 
-    console.log(snake)
-    console.log(sequence)
+    // console.log(snake)
+    // console.log(sequence)
 
     while (i != 2) {
         let j = Math.floor(side * side * Math.random())
@@ -113,7 +115,7 @@ function setUpPortal() {
         }
         else {
             obj[i] = j
-            console.log(i, obj[i])
+            // console.log(i, obj[i])
             i++
         }
     }
@@ -165,6 +167,7 @@ function generateSequence() {
             i++
         }
     }
+    sequence = [0]
     sequenceBackup = sequence
 
 }
@@ -184,13 +187,39 @@ function placeSequence() {
         sequencePrompt.appendChild(div)
     }
 }
+function placePowerUps() {
+    let numberOfPowerUps = 2
+    for (let i = 0; i < numberOfPowerUps; i++) {
+        let powerUp = Math.floor(powerUps.length * Math.random())
+        powerUpsNum[i] = powerUp
+    }
+
+    //placing powerups
+    let i = 0
+    while (i != numberOfPowerUps) {
+        let coordinate = Math.floor(side *side*Math.random() )
+
+            powerUpCoords.push(coordinate)
+            // cells[coordinate].classList.add(powerUpsClasses[powerUps[i]])
+
+            let image = document.createElement('img')
+            image.src = powerUps[powerUpsNum[i]]
+            console.log(powerUpsNum[i])
+            image.width = cells[coordinate].clientHeight 
+            cells[coordinate].appendChild(image)
+
+
+            i++
+    }
+
+    powerUpCoordBackup = powerUpCoords
+}
 
 function updateGame() {
-    currentTime += timeIncrement
-    console.log(currentTime)
+    
     if (sequenceFinsihed) {
         generateSequence()
-        placeSequence()
+        // placeSequence()
         sequenceFinsihed = false
         console.log(sequence)
 
@@ -202,13 +231,15 @@ function updateGame() {
         placePowerUps()
     }
 
+    currentTime += timeIncrement
+    // console.log(currentTime)
     scoreEle.textContent = "Score: " + score
     document.getElementById("lives").textContent = "Lives: " + lives
     document.getElementById("highScore").textContent = "High Score: " + highScore
 
     barObject.style.width = `${currentTime * 100 / defaultTime}%`
     if (currentTime == defaultTime) endgame()
-
+    
     updatePortal()
 }
 
@@ -607,7 +638,7 @@ function checkCollision(coord, displacement) {
 
     let x = x0 + xd
     let y = y0 + yd
-    console.log(x * side + y, sequence)
+    // console.log(x * side + y, sequence)
     if (y > side - 1 || y < 0) {
         console.log("wall collision")
         message = "You hit a wall!"
@@ -620,7 +651,7 @@ function checkCollision(coord, displacement) {
     }
     const grid = x * side + (y % side)
 
-    if (sequence.includes(grid) || sequence.includes(coord)) {
+    if (sequence.includes(coord) || sequence.includes(coord)) {
         console.log("block collision " + grid)
         return blockCollided(grid)
 
@@ -629,6 +660,15 @@ function checkCollision(coord, displacement) {
         console.log("snake collision")
         message = "You collided with yourself!"
         return true
+    }
+    if(powerUpCoords.includes(coord)){
+        let index = powerUpCoordBackup.indexOf(coord)
+        console.log("power up: " + index)
+        console.log(powerUpCoords)
+        powerUpCoords = powerUpCoords.splice(index,1)
+        console.log(powerUpCoords)
+        powerUpMethod[powerUpsNum[index]]()
+        return false
     }
 
     portals.forEach((portal) => {
