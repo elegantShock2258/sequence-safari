@@ -12,7 +12,7 @@ let sequenceBackup = []
 let letterSequence = []
 let colorSequence = []
 let sequenceFinsihed = true
-let sequenceLenght = 5
+let sequenceLenght = 9
 let colorDiff = 10
 
 let defaultTime = 50000 //50s
@@ -30,12 +30,14 @@ let initialised = false
 let paused = false
 
 let portalSprites = ["Assets/portal1.png", "Assets/portal2.png", "Assets/portal3.png", "Assets/portal4.png"]
-let portal = [] //start,end
+let portals = [] //start,end
 
+let slider = []
 
 function setUpPortal() {
     console.log("called")
     let i = 0;
+    let obj = []
     while (i != 2) {
         let j = Math.floor(side * side * Math.random())
 
@@ -48,37 +50,44 @@ function setUpPortal() {
             continue
         }
         else {
-            portal[i] = j
-            console.log(i,portal[i])
+            obj[i] = j
+            console.log(i, obj[i])
             i++
         }
     }
+
+    portals.push(obj)
 
     // portal = [10, 40]
 }
 
 function updatePortal() {
-    console.log(portal)
 
-    cells[portal[0]].innerHTML = ""
-    let image = document.createElement("img")
-    image.src = portalSprites[currentTime % 4]
-    image.width = cells[portal[0]].clientHeight * 2
 
-    cells[portal[0]].appendChild(image)
-    cells[portal[0]].classList.add("square")
-    cells[portal[0]].classList.remove("snake")
-    cells[portal[0]].classList.remove("head")
+    portals.forEach((portal) => {
+        let color = (portal[0] * portal[1]) % 360
+        cells[portal[0]].innerHTML = ""
+        let image = document.createElement("img")
+        image.style.filter = "hue-rotate(" + color + "deg)"
+        image.src = portalSprites[currentTime % 4]
+        image.width = cells[portal[0]].clientHeight * 2
 
-    cells[portal[1]].innerHTML = ""
-    let image1 = document.createElement("img")
-    image1.src = portalSprites[(currentTime + 1) % 4]
-    image1.width = cells[portal[1]].clientHeight * 2
+        cells[portal[0]].appendChild(image)
+        cells[portal[0]].classList.add("square")
+        cells[portal[0]].classList.remove("snake")
+        cells[portal[0]].classList.remove("head")
 
-    cells[portal[1]].appendChild(image1)
-    cells[portal[1]].classList.add("square")
-    cells[portal[1]].classList.remove("snake")
-    cells[portal[1]].classList.remove("head")
+        cells[portal[1]].innerHTML = ""
+        let image1 = document.createElement("img")
+        image1.style.filter = "hue-rotate(" + color + "deg)"
+        image1.src = portalSprites[(currentTime + 1) % 4]
+        image1.width = cells[portal[1]].clientHeight * 2
+
+        cells[portal[1]].appendChild(image1)
+        cells[portal[1]].classList.add("square")
+        cells[portal[1]].classList.remove("snake")
+        cells[portal[1]].classList.remove("head")
+    })
 }
 
 //update game
@@ -117,8 +126,6 @@ function placeSequence() {
 }
 
 function updateGame() {
-
-
     currentTime += 75
     console.log(currentTime)
     if (sequenceFinsihed) {
@@ -134,10 +141,7 @@ function updateGame() {
 
     barObject.style.width = `${currentTime * 100 / defaultTime}%`
     if (currentTime == defaultTime) endgame()
-
-
     updatePortal()
-
 }
 
 // grid
@@ -188,10 +192,8 @@ function initialSetup() {
     modal.classList.add('modal')
     modal.id = "startup"
 
-
     let mainlayout = document.createElement("div")
     mainlayout.classList.add('dialogueLayout')
-
 
     let h1_3 = document.createElement("h1")
     h1_3.classList.add('modalSelect')
@@ -375,7 +377,9 @@ function setup() {
 
     highScore = sessionStorage.getItem('highScore')
     console.log(highScore)
-    initialSetup()
+    // initialSetup()
+    // paused = true
+    initialised = true
     // gameLost("You Collided with a wall!")
     document.getElementById("leftBtn").onclick = function () {
         if (displacement != side) displacement = -side
@@ -449,6 +453,38 @@ function setup() {
 
     setUpPortal()
     updatePortal()
+    setUpPortal()
+    updatePortal()
+    setUpPortal()
+    updatePortal()
+
+
+
+    // placeSider()
+}
+function placeSider() {
+    let coods = Array(5)
+    let loop = true
+    let bool = true
+
+    while (!loop) {
+        let sliderStart = Math.floor(side * side * Math.random())
+        if (sliderStart in snake || sliderStart in portal || sliderStart in sequence) continue
+        else {
+            for (let i = 0; i < 5; i++) {
+                coods[i] = sliderStart + i * (Math.random() - 0.5 > 0 ? 1 : side)
+                bool &= (coods[i] in snake || coods[i] in portal || coods[i] in sequence)
+            }
+            loop = !bool
+        }
+    }
+
+    slider = coods
+    console.log(slider)
+
+    for (let i = 0; i < 5; i++)
+        cells[slider[i]].style.background = "red"
+
 }
 
 function loop() {
@@ -521,6 +557,7 @@ function checkCollision(coord, displacement) {
         return true
     }
     const grid = x * side + (y % side)
+
     if (sequence.includes(grid) || sequence.includes(coord)) {
         console.log("block collision " + grid)
         return blockCollided(grid)
@@ -530,18 +567,22 @@ function checkCollision(coord, displacement) {
         console.log("snake collision")
         message = "You collided with yourself!"
         return true
-    } if (portal.includes(grid) || portal.includes(coord)) {
-        console.log("portal collision")
-
-        cells[snake[0]].classList.remove('head')
-        cells[snake[0]].classList.remove('snake')
-        cells[snake[0]].classList.add('square')
-        cells[snake[0]].innerText = ""
-        snake[0] = portal[(portal.indexOf(grid) + 1) % 2]
-
-
-        return false
     }
+
+    portals.forEach((portal) => {
+        if (portal.includes(grid)) {
+            console.log("portal collision")
+
+            cells[snake[0]].classList.remove('head')
+            cells[snake[0]].classList.remove('snake')
+            cells[snake[0]].classList.add('square')
+            cells[snake[0]].innerText = ""
+            snake[0] = portal[(portal.indexOf(grid) + 1) % 2]
+
+
+            return false
+        }
+    })
     return false
 }
 function blockCollided(i) {
