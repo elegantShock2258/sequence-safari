@@ -497,8 +497,8 @@ function setup() {
 
     highScore = sessionStorage.getItem('highScore')
     console.log(highScore)
-    // initialSetup()
-    initialised = true
+    initialSetup()
+    // initialised = true
     // gameLost("You Collided with a wall!")
     document.getElementById("leftBtn").onclick = function () {
         if (displacement != side) displacement = -side
@@ -613,6 +613,7 @@ function loop() {
                 gameLost()
                 return;
             }
+            // paused = true
 
         } else {
         }
@@ -727,7 +728,8 @@ function blockCollided(i) {
         let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,50%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - color] + ",100%,50%)").toLocaleString() + ")"
         document.body.style.transition = 'background 2s ease-in-out'
         document.body.style.background = str
-        sequencePrompt.removeChild(sequencePrompt.firstChild)
+        sequencePrompt.firstChild.classList.add('prompt-done')
+        setTimeout(() => sequencePrompt.removeChild(sequencePrompt.firstChild), 300)
 
         //play eating audio
         document.getElementById("eat").play()

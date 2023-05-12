@@ -72,7 +72,8 @@ body {
     height: 80vh;
 
     margin: auto;
-    padding: 0;
+    padding: none;
+    border: none;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -100,19 +101,19 @@ body {
 }
 
 .playground-damage {
-    transition: background-color 0.3s ease-in-out ;
+    transition: background-color 0.3s ease-in-out;
     background-color: #ff0000e0;
 }
 
 .square {
-    padding: 0px;
+    padding: none;
+    margin: none;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
 
-    margin: 0px;
     width: 1vh;
     height: 1vh;
 }
@@ -155,6 +156,19 @@ body {
     font-family: 'Press Start 2P', Courier, monospace;
 
     border: 2px solid black;
+
+    transition: background-color 0.3s ease-out;
+    transition: color 0.3s ease-out;
+    transition: border 0.3s ease-out;
+}
+
+.prompt-done {
+    transition: background-color 0.3s ease-out;
+    transition: border 0.3s ease-out;
+    transition: color 0.3s ease-out;
+
+    background-color: white !important;
+    color: white;
 }
 
 .overlay {
