@@ -280,7 +280,7 @@ function setUpGrid(width = 10, sqaureWidth = 80) {
 
 // snake
 function updateSnake(first = false) {
-    if (first) snake = [6, 5, 4, 3]
+    if (first) snake = [0, 0, 0, 0]
 
     snake.forEach((i) => {
         cells[i].classList.add('snake')
@@ -304,7 +304,11 @@ let snake = []
 
 let modal = ""
 let lostText = ""
+let startGameText = ""
 let settings = ""
+
+let difficulty = ""
+let selectDropdown = null
 
 function initialSetup() {
     paused = true
@@ -331,11 +335,50 @@ function initialSetup() {
     let uiDiv = document.createElement("div")
     uiDiv.classList.add('uiDev')
 
-    lostText = document.createElement("div")
-    lostText.classList.add('modalSelect')
-    lostText.classList.add('modalSelectText')
+    let chooseDifficultyContainer = document.createElement("div")
+    chooseDifficultyContainer.classList.add('chooseDifficultyContainer')
 
-    lostText.textContent = "Start Game"
+    let textChooseDifficulty = document.createElement("span")
+    textChooseDifficulty.textContent = "Choose a Difficulty"
+    textChooseDifficulty.classList.add('textChooseDifficulty')
+
+    selectDropdown = document.createElement("select")
+    selectDropdown.attributes.name = "difficutly"
+    selectDropdown.classList.add('selectDropdown')
+
+    let chooseDifficulty = document.createElement("option")
+    chooseDifficulty.value = "choose difficulty"
+    chooseDifficulty.textContent = "choose difficulty"
+    chooseDifficulty.disabled = true
+    chooseDifficulty.classList.add('chooseDifficultyDropdown')
+
+    let easyOption = document.createElement("option")
+    easyOption.value = 80
+    easyOption.textContent = "easy (80x80)"
+    easyOption.classList.add('easyOption')
+    let mediumOption = document.createElement("option")
+    mediumOption.value = 40
+    mediumOption.textContent = "medium (40x40)"
+    mediumOption.classList.add('mediumOption')
+    let hardOption = document.createElement("option")
+    hardOption.value = 20
+    hardOption.textContent = "hard (20x20)"
+    hardOption.classList.add('hardOption')
+
+    selectDropdown.appendChild(chooseDifficulty)
+    selectDropdown.appendChild(easyOption)
+    selectDropdown.appendChild(mediumOption)
+    selectDropdown.appendChild(hardOption)
+
+
+    chooseDifficultyContainer.appendChild(textChooseDifficulty)
+    chooseDifficultyContainer.appendChild(selectDropdown)
+
+    startGameText = document.createElement("div")
+    startGameText.classList.add('modalSelect')
+    startGameText.classList.add('modalSelectText')
+
+    startGameText.textContent = "Start Game"
 
     settings = document.createElement("div")
     settings.classList.add('modalSelect')
@@ -352,15 +395,15 @@ function initialSetup() {
 
     settings.textContent = "Quit"
     settings.style.animation = "none"
-    lostText.textContent = ">  Start Game"
-    lostText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+    startGameText.textContent = ">  Start Game"
+    startGameText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
 
-    lostText.addEventListener("touchstart", (e) => {
+    startGameText.addEventListener("touchstart", (e) => {
         e.preventDefault()
         option = 1
 
-        lostText.textContent = "Start Game"
-        lostText.style.animation = "none"
+        startGameText.textContent = "Start Game"
+        startGameText.style.animation = "none"
         settings.textContent = ">    Quit"
         settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
 
@@ -375,13 +418,14 @@ function initialSetup() {
 
         settings.textContent = "Quit"
         settings.style.animation = "none"
-        lostText.textContent = ">  Start Game"
-        lostText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+        startGameText.textContent = ">  Start Game"
+        startGameText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
 
         window.close()
     })
 
-    uiDiv.appendChild(lostText)
+    uiDiv.appendChild(chooseDifficultyContainer)
+    uiDiv.appendChild(startGameText)
     uiDiv.appendChild(settings)
     mainlayout.appendChild(h1)
     mainlayout.appendChild(h1_2)
@@ -498,82 +542,90 @@ function setup() {
     highScore = sessionStorage.getItem('highScore')
     console.log(highScore)
     initialSetup()
-    // initialised = true
-    // gameLost("You Collided with a wall!")
-    document.getElementById("leftBtn").onclick = function () {
-        if (displacement != side) displacement = -side
-    }
-    document.getElementById("rightBtn").onclick = function () {
-        if (displacement != -side) displacement = side
-    }
-    document.getElementById("upBtn").onclick = function () {
-        if (displacement != 1) displacement = -1
-    }
-    document.getElementById("downBtn").onclick = function () {
-        if (displacement != -1) displacement = 1
 
-    }
-
-    document.addEventListener('keydown', function (e) {
-        if (e.key === "ArrowLeft" || e.key === "a") {
+        document.getElementById("leftBtn").onclick = function () {
             if (displacement != side) displacement = -side
-        } else if (e.key === "ArrowRight" || e.key === "d") {
+        }
+        document.getElementById("rightBtn").onclick = function () {
             if (displacement != -side) displacement = side
-        } else if (e.key === "ArrowDown" || e.key === "s") {
-            if (!initialised) {
-                option = 1
-
-                lostText.textContent = "Start Game"
-                lostText.style.animation = "none"
-                settings.textContent = ">    Quit"
-                settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
-            }
-            if (displacement != -1) displacement = 1
-        } else if (e.key === "ArrowUp" || e.key === "w") {
-            if (!initialised) {
-                option = 0
-
-                settings.textContent = "Quit"
-                settings.style.animation = "none"
-                lostText.textContent = ">  Start Game"
-                lostText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
-            }
+        }
+        document.getElementById("upBtn").onclick = function () {
             if (displacement != 1) displacement = -1
-        } else if (e.key === "p") {
-            pause(paused)
-        } else if (e.key === "Enter") {
-            if (!initialised) {
-                if (option == 0) {
-                    document.body.removeChild(modal)
-                    initialised = true
-                    paused = false
-                } else if (option == 23) {
-                    this.location.reload()
-                } else {
-                    window.close()
+        }
+        document.getElementById("downBtn").onclick = function () {
+            if (displacement != -1) displacement = 1
+
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === "ArrowLeft" || e.key === "a") {
+                if (displacement != side) displacement = -side
+            } else if (e.key === "ArrowRight" || e.key === "d") {
+                if (displacement != -side) displacement = side
+            } else if (e.key === "ArrowDown" || e.key === "s") {
+                if (!initialised) {
+                    option = 1
+
+                    lostText.textContent = "Start Game"
+                    lostText.style.animation = "none"
+                    settings.textContent = ">    Quit"
+                    settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+                }
+                if (displacement != -1) displacement = 1
+            } else if (e.key === "ArrowUp" || e.key === "w") {
+                if (!initialised) {
+                    option = 0
+
+                    settings.textContent = "Quit"
+                    settings.style.animation = "none"
+                    lostText.textContent = ">  Start Game"
+                    lostText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+                }
+                if (displacement != 1) displacement = -1
+            } else if (e.key === "p") {
+                pause(paused)
+            } else if (e.key === "Enter") {
+                if (!initialised) {
+                    if (option == 0) {
+                        difficulty = selectDropdown.options[e.selectedIndex].value
+                        document.body.removeChild(modal)
+                        initialised = true
+                        paused = false
+                    } else if (option == 23) {
+                        this.location.reload()
+                    } else {
+                        window.close()
+                    }
                 }
             }
-        }
-    })
-
-
-
-    let size = Math.round(playground.clientWidth * 100 / window.innerHeight)
-    console.log(size)
-    setUpGrid(4, size)
-    side = Math.floor(size / 4)
-    for (let i = 0; i < side * side; i++)
-        cells[i] = document.getElementById("square" + i)
-
-    updateSnake(snake)
-
-    let str = "linear-gradient(0.25turn,#300350,#94167f)"
-    document.body.style.background = str
+        })
 
 
 
 
+    if (initialised) {
+        // initialised = true
+        // gameLost("You Collided with a wall!")
 
+        // let size = Math.round(playground.clientWidth * 100 / window.innerHeight)
+        // console.log(size)
+        let squareSide = null
+        console.log(difficulty)
+        if (difficulty == 80) squareSide = 1
+        else if (difficulty == 40) squareSide = 2
+        else if (difficulty == 20) squareSide = 4
+
+        setUpGrid(80 / difficulty, difficulty)
+
+        side = Math.floor(difficulty * difficulty / 80)
+        for (let i = 0; i < side * side; i++)
+            cells[i] = document.getElementById("square" + i)
+
+        updateSnake(snake)
+
+        let str = "linear-gradient(0.25turn,#300350,#94167f)"
+        document.body.style.background = str
+    }
     // placeSider()
 }
 function placeSider() {

@@ -145,7 +145,20 @@ body {
     color: #303030;
 
 }
+.chooseDifficultyContainer{
+    display: flex;
 
+    margin: 1%;
+    font-family: 'Press Start 2P', Courier, monospace;
+
+}
+.selectDropdown,opiton{
+    background-color:#101010;
+    color:white;
+    padding: 10px;
+    font-family: 'Press Start 2P', Courier, monospace;
+
+}
 
 .prompt {
     background-color: yellow;
