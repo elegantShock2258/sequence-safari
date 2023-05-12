@@ -92,25 +92,11 @@ let powerUpMethod = [() => {
             cells[last].innerText = ''
 
             let k = 0
-            let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,50%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - color] + ",100%,50%)").toLocaleString() + ")"
+            let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,40%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - color] + ",100%,40%)").toLocaleString() + ")"
             document.body.style.transition = 'background 2s ease-in-out'
             document.body.style.background = str
             sequencePrompt.removeChild(sequencePrompt.firstChild)
 
-
-            // let tail = sequence.pop()
-
-            // cells[tail].classList.remove('block')
-            // cells[tail].classList.add('square')
-            // cells[tail].innerText = ''
-            // cells[tail].style.background = ''
-            // cells[tail].innerHTML = ''
-
-            // let k = 0
-            // let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - i)).map((e) => "hsl(" + e + ",100%,50%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - i] + ",100%,50%)").toLocaleString() + ")"
-            // document.body.style.transition = 'background 2s ease-in-out'
-            // document.body.style.background = str
-            // sequencePrompt.removeChild(sequencePrompt.firstChild)
         }
     }
     console.log(sequence)
@@ -199,19 +185,20 @@ function placeSequence() {
     for (let i = sequenceLenght - 1; i >= 0; i--) {
         console.log(sequence[i])
         cells[sequence[i]].innerHTML = "<span>" + String.fromCharCode(letterSequence[i]) + "</span>"
-        cells[sequence[i]].style.background = `hsl(${colorSequence[i]},100%,50%)`
+        cells[sequence[i]].style.background = `hsl(${colorSequence[i]},100%,40%)`
         cells[sequence[i]].classList.add("block")
 
         let div = document.createElement('div')
         div.classList.add("prompt")
         div.innerText = String.fromCharCode(letterSequence[i])
-        div.style.background = `hsl(${colorSequence[i]},100%,50%)`
+        div.style.background = `hsl(${colorSequence[i]},100%,40%)`
 
         sequencePrompt.appendChild(div)
     }
 }
 function placePowerUps() {
-    let numberOfPowerUps = 2
+    let numberOfPowerUps = Math.floor(8 * Math.random())
+
     for (let i = 0; i < numberOfPowerUps; i++) {
         let powerUp = Math.floor(powerUps.length * Math.random())
         powerUpsNum[i] = powerUp
@@ -238,6 +225,7 @@ function placePowerUps() {
 
 function updateGame() {
 
+    currentTime += timeIncrement
     if (sequenceFinsihed) {
         generateSequence()
         placeSequence()
@@ -252,14 +240,16 @@ function updateGame() {
         placePowerUps()
     }
 
-    currentTime += timeIncrement
     // console.log(currentTime)
     scoreEle.textContent = "Score: " + score
     document.getElementById("lives").textContent = "Lives: " + lives
     document.getElementById("highScore").textContent = "High Score: " + highScore
 
     barObject.style.width = `${currentTime * 100 / defaultTime}%`
-    if (currentTime == defaultTime) endgame()
+    if (currentTime >= defaultTime) {
+        message = "You ran out of time!"
+        endgame()
+    }
 
     updatePortal()
 }
@@ -267,6 +257,7 @@ function updateGame() {
 // grid
 function setUpGrid(width = 10, sqaureWidth = 80) {
     let numSquares = (sqaureWidth / width) * (sqaureWidth / width)
+    console.log("number of squaare: ", numSquares)
     for (let i = 0; i < numSquares; i++) {
         let div = document.createElement('div')
         div.classList.add('square')
@@ -291,7 +282,7 @@ function updateSnake(first = false) {
 
     cells[snake[0]].classList.add('snake')
     cells[snake[0]].classList.add('head')
-    cells[snake[0]].innerHTML = '<span>UwU</span>'
+    cells[snake[0]].innerHTML = '<span></span>'
 }
 
 
@@ -309,6 +300,7 @@ let settings = ""
 
 let difficulty = ""
 let selectDropdown = null
+let playerDropdown = null
 
 function initialSetup() {
     paused = true
@@ -335,11 +327,53 @@ function initialSetup() {
     let uiDiv = document.createElement("div")
     uiDiv.classList.add('uiDev')
 
+
+    // choosing players
+
+    // let playerSelectorContainer = document.createElement("div")
+    // playerSelectorContainer.classList.add('chooseDifficultyContainer')
+
+    // let numberOfPlayersText = document.createElement("span")
+    // numberOfPlayersText.textContent = "Number Of Players: "
+    // numberOfPlayersText.classList.add('textChooseDifficulty')
+
+    // playerDropdown = document.createElement("select")
+    // playerDropdown.attributes.name = "difficutly"
+    // playerDropdown.classList.add('selectDropdown')
+
+    // let playersNumber = document.createElement("option")
+    // playersNumber.value = "Number of players"
+    // playersNumber.textContent = "Number of players"
+    // playersNumber.disabled = true
+    // playersNumber.classList.add('chooseDifficultyDropdown')
+
+    // let singlePlayer = document.createElement("option")
+    // singlePlayer.value = 1
+    // singlePlayer.textContent = "1 Player"
+
+    // let doublePlayer = document.createElement("option")
+    // doublePlayer.value = 2
+    // doublePlayer.textContent = "2 Players"
+
+    // playerDropdown.appendChild(playersNumber)
+    // playerDropdown.appendChild(singlePlayer)
+    // playerDropdown.appendChild(doublePlayer)
+
+    // playerSelectorContainer.appendChild(numberOfPlayersText)
+    // playerSelectorContainer.appendChild(playerDropdown)
+
+    // asking difficulty
+
+
     let chooseDifficultyContainer = document.createElement("div")
     chooseDifficultyContainer.classList.add('chooseDifficultyContainer')
+    
+    let playerAsker = document.createElement("div")
+    playerAsker.classList.add('chooseDifficultyContainer')
+
 
     let textChooseDifficulty = document.createElement("span")
-    textChooseDifficulty.textContent = "Choose a Difficulty"
+    textChooseDifficulty.textContent = "Choose a Difficulty:   "
     textChooseDifficulty.classList.add('textChooseDifficulty')
 
     selectDropdown = document.createElement("select")
@@ -353,16 +387,16 @@ function initialSetup() {
     chooseDifficulty.classList.add('chooseDifficultyDropdown')
 
     let easyOption = document.createElement("option")
-    easyOption.value = 80
-    easyOption.textContent = "easy (80x80)"
+    easyOption.value = 20
+    easyOption.textContent = "easy (20x20)"
     easyOption.classList.add('easyOption')
     let mediumOption = document.createElement("option")
     mediumOption.value = 40
     mediumOption.textContent = "medium (40x40)"
     mediumOption.classList.add('mediumOption')
     let hardOption = document.createElement("option")
-    hardOption.value = 20
-    hardOption.textContent = "hard (20x20)"
+    hardOption.value = 80
+    hardOption.textContent = "hard (80x80)"
     hardOption.classList.add('hardOption')
 
     selectDropdown.appendChild(chooseDifficulty)
@@ -425,6 +459,7 @@ function initialSetup() {
     })
 
     uiDiv.appendChild(chooseDifficultyContainer)
+    // uiDiv.appendChild(playerSelectorContainer)
     uiDiv.appendChild(startGameText)
     uiDiv.appendChild(settings)
     mainlayout.appendChild(h1)
@@ -543,81 +578,96 @@ function setup() {
     console.log(highScore)
     initialSetup()
 
-        document.getElementById("leftBtn").onclick = function () {
+    document.getElementById("leftBtn").onclick = function () {
+        if (displacement != side) displacement = -side
+    }
+    document.getElementById("rightBtn").onclick = function () {
+        if (displacement != -side) displacement = side
+    }
+    document.getElementById("upBtn").onclick = function () {
+        if (displacement != 1) displacement = -1
+    }
+    document.getElementById("downBtn").onclick = function () {
+        if (displacement != -1) displacement = 1
+
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === "ArrowLeft" || e.key === "a") {
             if (displacement != side) displacement = -side
-        }
-        document.getElementById("rightBtn").onclick = function () {
+        } else if (e.key === "ArrowRight" || e.key === "d") {
             if (displacement != -side) displacement = side
-        }
-        document.getElementById("upBtn").onclick = function () {
-            if (displacement != 1) displacement = -1
-        }
-        document.getElementById("downBtn").onclick = function () {
+        } else if (e.key === "ArrowDown" || e.key === "s") {
+            if (!initialised) {
+                option = 1
+
+                startGameText.textContent = "Start Game"
+                startGameText.style.animation = "none"
+                settings.textContent = ">    Quit"
+                settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+            }
             if (displacement != -1) displacement = 1
+        } else if (e.key === "ArrowUp" || e.key === "w") {
+            if (!initialised) {
+                option = 0
 
-        }
+                settings.textContent = "Quit"
+                settings.style.animation = "none"
+                startGameText.textContent = ">  Start Game"
+                startGameText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+            }
+            if (displacement != 1) displacement = -1
+        } else if (e.key === "p") {
+            pause(paused)
+        } else if (e.key === "Enter") {
+            if (!initialised) {
+                if (option == 0) {
+                    difficulty = selectDropdown.options[selectDropdown.selectedIndex].value
+                    console.log("difficulty: ", difficulty)
 
-        document.addEventListener('keydown', function (e) {
-            if (e.key === "ArrowLeft" || e.key === "a") {
-                if (displacement != side) displacement = -side
-            } else if (e.key === "ArrowRight" || e.key === "d") {
-                if (displacement != -side) displacement = side
-            } else if (e.key === "ArrowDown" || e.key === "s") {
-                if (!initialised) {
-                    option = 1
+                    document.body.removeChild(modal)
+                    initialised = true
+                    console.log(initialised)
+                    paused = false
 
-                    lostText.textContent = "Start Game"
-                    lostText.style.animation = "none"
-                    settings.textContent = ">    Quit"
-                    settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
-                }
-                if (displacement != -1) displacement = 1
-            } else if (e.key === "ArrowUp" || e.key === "w") {
-                if (!initialised) {
-                    option = 0
-
-                    settings.textContent = "Quit"
-                    settings.style.animation = "none"
-                    lostText.textContent = ">  Start Game"
-                    lostText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
-                }
-                if (displacement != 1) displacement = -1
-            } else if (e.key === "p") {
-                pause(paused)
-            } else if (e.key === "Enter") {
-                if (!initialised) {
-                    if (option == 0) {
-                        difficulty = selectDropdown.options[e.selectedIndex].value
-                        document.body.removeChild(modal)
-                        initialised = true
-                        paused = false
-                    } else if (option == 23) {
-                        this.location.reload()
-                    } else {
-                        window.close()
-                    }
+                    setUpGui();
+                } else if (option == 23) {
+                    this.location.reload()
+                } else {
+                    window.close()
                 }
             }
-        })
+        }
+    })
+}
 
 
 
-
+function setUpGui() {
     if (initialised) {
         // initialised = true
         // gameLost("You Collided with a wall!")
 
-        // let size = Math.round(playground.clientWidth * 100 / window.innerHeight)
+        let size = Math.round(playground.clientWidth * 100 / window.innerHeight)
         // console.log(size)
         let squareSide = null
-        console.log(difficulty)
-        if (difficulty == 80) squareSide = 1
-        else if (difficulty == 40) squareSide = 2
-        else if (difficulty == 20) squareSide = 4
+        console.log("hmm difficulty now: ", difficulty)
+        if (difficulty == 80) {
+            sequenceLenght = 20
+            squareSide = 1
+        }
+        else if (difficulty == 40) {
+            sequenceLenght = 15
+            squareSide = 2
+        }
+        else if (difficulty == 20) {
+            squareSide = 4
+        }
+        console.log(squareSide, difficulty)
+        setUpGrid(squareSide, size)
 
-        setUpGrid(80 / difficulty, difficulty)
-
-        side = Math.floor(difficulty * difficulty / 80)
+        side = Math.floor(size / squareSide)
+        console.log(side)
         for (let i = 0; i < side * side; i++)
             cells[i] = document.getElementById("square" + i)
 
@@ -626,31 +676,6 @@ function setup() {
         let str = "linear-gradient(0.25turn,#300350,#94167f)"
         document.body.style.background = str
     }
-    // placeSider()
-}
-function placeSider() {
-    let coods = Array(5)
-    let loop = true
-    let bool = true
-
-    while (!loop) {
-        let sliderStart = Math.floor(side * side * Math.random())
-        if (sliderStart in snake || sliderStart in portal || sliderStart in sequence) continue
-        else {
-            for (let i = 0; i < 5; i++) {
-                coods[i] = sliderStart + i * (Math.random() - 0.5 > 0 ? 1 : side)
-                bool &= (coods[i] in snake || coods[i] in portal || coods[i] in sequence)
-            }
-            loop = !bool
-        }
-    }
-
-    slider = coods
-    console.log(slider)
-
-    for (let i = 0; i < 5; i++)
-        cells[slider[i]].style.background = "red"
-
 }
 
 function loop() {
@@ -673,8 +698,6 @@ function loop() {
         setTimeout(updateLoop, Math.floor(100 * (1 - currentTime / defaultTime)))
     }
     setTimeout(updateLoop, 100)
-
-
 }
 
 //movement 
@@ -682,7 +705,7 @@ function move(displacement) {
     let collide = true
     collide = checkCollision(snake[0], displacement)
     if (!collide) {
-        cells[snake[0]].innerText = cells[snake[0]].innerText.replace("UwU", '')
+        cells[snake[0]].innerText = cells[snake[0]].innerText.replace("😚", '')
         cells[snake[0]].classList.remove('head')
         const tail = snake.pop()
         cells[tail].classList.remove('snake')
@@ -695,7 +718,7 @@ function move(displacement) {
         cells[snake[0]].classList.add('snake')
         cells[snake[0]].classList.add('head')
 
-        cells[snake[0]].innerHTML = '<span>UwU</span>'
+        cells[snake[0]].innerHTML = '<span>😚</span>'
     } else if (collide) {
         endgame()
     }
@@ -777,7 +800,7 @@ function blockCollided(i) {
 
         // grow(true)
         let k = 0
-        let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,50%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - color] + ",100%,50%)").toLocaleString() + ")"
+        let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,40%) " + ((++k) / sequenceLenght) * 100 + "%").toLocaleString() + "," + Array(sequence.length).fill("hsl(" + colorSequence[sequenceLenght - color] + ",100%,40%)").toLocaleString() + ")"
         document.body.style.transition = 'background 2s ease-in-out'
         document.body.style.background = str
         sequencePrompt.firstChild.classList.add('prompt-done')
@@ -798,7 +821,7 @@ function blockCollided(i) {
         grow(true)
         console.log("sequence finsihed!")
 
-        let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,50%)").toLocaleString() + "," + Array(sequence.length).fill("black").toLocaleString() + ")"
+        let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,40%)").toLocaleString() + "," + Array(sequence.length).fill("black").toLocaleString() + ")"
         document.body.style.background = str
 
         if (sequencePrompt.firstChild != null)
@@ -837,7 +860,7 @@ function grow(grow) {
 
         cells[snake[0]].classList.add('snake')
         cells[snake[0]].classList.add('head')
-        cells[snake[0]].innerText = 'UwU'
+        cells[snake[0]].innerText = ''
     } else {
         cells[snake[0]].innerText = ''
         cells[snake[0]].classList.remove('head')

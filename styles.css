@@ -124,7 +124,8 @@ body {
 }
 
 .head {
-    font-size: 0.8em;
+    background-color:greenyellow;
+    content:"UwU";
 }
 
 .head,
@@ -136,17 +137,41 @@ body {
     color: white;
     font-family: 'Press Start 2P', Courier, monospace;
 }
+                                                                                /* second snake */
+/* .snake2 {
+    background-color: #ff00f2f0;
+    border: 2px transparent solid;
+}
+
+.head2 {
+    background-color:greenyellow;
+    content:"UwU";
+}
+
+.head2,
+.tail2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font-family: 'Press Start 2P', Courier, monospace;
+}
 
 
-.block {
+.block2 {
     font-family: 'Press Start 2P';
     font-weight: bolder;
     border: 2px aliceblue solid;
     color: #303030;
+    font-size: smaller;
+} */
 
-}
 .chooseDifficultyContainer{
     display: flex;
+    color:white;
+
+    gap: 10%;
 
     margin: 1%;
     font-family: 'Press Start 2P', Courier, monospace;
