@@ -933,7 +933,7 @@ function setUpGui() {
                 cells[i] = document.getElementById("square" + i)
             console.log(cells)
         }
-        updateSnakes(true, 0, true, 10*side)
+        updateSnakes(true, 0, true, 10 * side)
         console.log(snake)
 
         let str = "linear-gradient(0.25turn,#300350,#94167f)"
@@ -967,7 +967,7 @@ function loop() {
 //movement 
 function moveSnake1(displacement) {
     let collide = true
-    collide = checkCollision(snake[0], displacement)
+    collide = checkCollision(snake[0], displacement, 1)
     if (!collide) {
         cells[snake[0]].innerText = cells[snake[0]].innerText.replace(":D", '')
         cells[snake[0]].classList.remove('head')
@@ -992,7 +992,7 @@ function moveSnake1(displacement) {
 
 function moveSnake2(displacement) {
     let collide = true
-    collide = checkCollision(snake2[0], displacement)
+    collide = checkCollision(snake2[0], displacement, 2)
     if (!collide) {
         cells[snake2[0]].innerText = cells[snake2[0]].innerText.replace(":D", '')
         cells[snake2[0]].classList.remove('head2')
@@ -1001,7 +1001,7 @@ function moveSnake2(displacement) {
         cells[tail].classList.remove('tail2')
         cells[tail].innerText = ''
         snake2.unshift((snake2[0] + displacement))
-        
+
         cells[snake2[snake2.length - 1]].classList.add('tail2')
         cells[snake2[snake2.length - 1]].innerHTML = '<span></span>'
 
@@ -1021,11 +1021,7 @@ function moveSnakes(displacement1, displacement2 = -Infinity) {
     if (numPlayers > 1) moveSnake2(displacement2)
 }
 
-
-
-
-
-function checkCollision(coord, displacement) {
+function checkCollision(coord, displacement, snakeNumber) {
     let y0 = Math.floor(coord % side)
     let x0 = Math.floor(coord / side)
 
@@ -1054,12 +1050,43 @@ function checkCollision(coord, displacement) {
     }
 
     //TODO: Sort this out
+    if (numPlayers == 1) {
+        if (snake.includes(grid)) {
+            console.log("snake collision")
+            message = "You collided with yourself!"
+            return true
+        }
+    } else {
+        if (snakeNumber == 1) {
+            // checking for 1st snake colliding on snake 2
+            if (snake2.includes(grid)) {
+                console.log("snake collision")
+                message = "Green Snake collided with the Purple Snake!"
+                return true
+            }
+            // checking for 1st snake colliding on itself
+            if (snake.includes(grid)) {
+                console.log("snake collision")
+                message = "Green Snake Collided on itself!"
+                return true
+            }
+        }
+        else if (snakeNumber == 2) {
+            // checking for 2st snake colliding on snake 1
+            if (snake.includes(grid)) {
+                console.log("snake collision")
+                message = "Purple Snake collided with the Green Snake!"
+                return true
+            }
+            // checking for 2e snake colliding on itself
+            if (snake2.includes(grid)) {
+                console.log("snake collision")
+                message = "Purple Snake collided with itself!"
+                return true
+            }
+        }
+    }
 
-    // if (snake.includes(grid)) {
-    //     console.log("snake collision")
-    //     message = "You collided with yourself!"
-    //     return true
-    // }
 
     if (powerUpCoords.includes(coord)) {
         let index = powerUpCoordBackup.indexOf(coord)
@@ -1075,13 +1102,28 @@ function checkCollision(coord, displacement) {
     portals.forEach((portal) => {
         if (portal.includes(grid)) {
             console.log("portal collision")
-
-            cells[snake[0]].classList.remove('head')
-            cells[snake[0]].classList.remove('snake')
-            cells[snake[0]].classList.add('square')
-            cells[snake[0]].innerText = ""
-            snake[0] = portal[(portal.indexOf(grid) + 1) % 2]
-
+            if (numPlayers == 1) {
+                cells[snake[0]].classList.remove('head')
+                cells[snake[0]].classList.remove('snake')
+                cells[snake[0]].classList.add('square')
+                cells[snake[0]].innerText = ""
+                snake[0] = portal[(portal.indexOf(grid) + 1) % 2]
+            } else if (numPlayers > 1) {
+                if (snakeNumber == 1) {
+                    cells[snake[0]].classList.remove('head')
+                    cells[snake[0]].classList.remove('snake')
+                    cells[snake[0]].classList.add('square')
+                    cells[snake[0]].innerText = ""
+                    snake[0] = portal[(portal.indexOf(grid) + 1) % 2]
+                }
+                else if (snakeNumber == 2) {
+                    cells[snake2[0]].classList.remove('head')
+                    cells[snake2[0]].classList.remove('snake')
+                    cells[snake2[0]].classList.add('square')
+                    cells[snake2[0]].innerText = ""
+                    snake2[0] = portal[(portal.indexOf(grid) + 1) % 2]
+                }
+            }
 
             return false
         }
@@ -1210,7 +1252,6 @@ function endgame() {
         return;
     }
 }
-
 
 setup()
 loop()
