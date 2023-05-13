@@ -382,7 +382,7 @@ h1 {
 
 
 .pause-text,
-.pressP {
+.pressP,.pressS ,.savedText{
     position: absolute;
     top: 0;
     left: 0;
@@ -397,7 +397,15 @@ h1 {
     animation: track 5ms infinite;
 
 }
-
+.pressS{
+    top:20vh;
+    font-size: 150%;
+}
+.savedText{
+    top:25vh;
+    font-size: 150%;
+    color:green;
+}
 .pause:after {
     box-shadow: inset 0 0 10em rgba(0, 0, 0, 0.75);
     position: absolute;

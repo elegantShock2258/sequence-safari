@@ -65,9 +65,9 @@ let powerUpCoords = []
 let powerUpCoordBackup = []
 let powerUpsNum = []
 
-// press s on pause screen to save game
 
-if (sessionStorage.getItem('game') != null) {
+if (JSON.parse(sessionStorage.getItem('game')) != null) {
+
     console.log("cakked")
     let game = JSON.parse(sessionStorage.getItem('game'))
     highScore = game["highscore"]
@@ -80,12 +80,12 @@ if (sessionStorage.getItem('game') != null) {
     gridSize = game["gridSize"]
     side = game["side"]
 
-    cells = game["cells"]
     displacement1 = game["displacement"]
     snake = game["snake"]
     letterSequence = game["letterSequence"]
     colorSequence = game["colorSequence"]
     sequenceFinsihed = game["sequenceFinsihed"]
+    
     sequenceLenght = game["sequenceLenght"]
 
 
@@ -101,6 +101,9 @@ if (sessionStorage.getItem('game') != null) {
     powerUpsNum = game["powerUpsNum"]
 
     currentTime = game["currentTime"]
+
+
+
 }
 
 
@@ -255,8 +258,9 @@ function generateSequence() {
 
 }
 function placeSequence() {
+    console.log("placing sequence: ", sequence,"of length",sequenceLenght)
     sequencePrompt.textContent = ''
-    for (let i = sequenceLenght - 1; i >= 0; i--) {
+    for (let i = sequence.length - 1; i >= 0; i--) {
         console.log(sequence[i])
         cells[sequence[i]].innerHTML = "<span>" + String.fromCharCode(letterSequence[i]) + "</span>"
         cells[sequence[i]].style.background = `hsl(${colorSequence[i]},100%,40%)`
@@ -647,91 +651,24 @@ function gameLost(message) {
 
 }
 
-
-function saved(message) {
-    paused = true
-
-    option = 23
-
-    modal = document.createElement("div")
-    modal.classList.add('modal')
-    modal.id = "startup"
-
-    let mainlayout = document.createElement("div")
-    mainlayout.classList.add('savedLayout')
-
-    let h1 = document.createElement("h1")
-    h1.classList.add('h1Lost')
-    h1.textContent = "Sequence"
-    let h1_2 = document.createElement("h1")
-    h1_2.classList.add('h1Lost')
-    h1_2.textContent = "Safari"
-    h1_2.style.alignSelf = "flex-end"
-
-    let uiDiv = document.createElement("div")
-    uiDiv.classList.add('uiDev')
-
-    lostText = document.createElement("div")
-    lostText.classList.add('modalSelect')
-    lostText.classList.add('youLostText')
-
-    lostText.textContent = "Game Saved!"
-
-    settings = document.createElement("div")
-    settings.classList.add('modalSelect')
-    settings.textContent = message
-
-    let highScoreEle = document.createElement("div")
-    highScoreEle.classList.add('modalSelect')
-    highScoreEle.style.fontSize = "1em"
-    highScoreEle.style.textShadow = ""
-    highScoreEle.textContent = "High Score: " + highScore
-    highScoreEle.style.marginBottom = "10%"
-
-    let scoreEle = document.createElement("div")
-    scoreEle.classList.add('modalSelect')
-    scoreEle.style.fontSize = "1em"
-    scoreEle.style.textShadow = ""
-    scoreEle.textContent = "Score: " + score
-    scoreEle.style.marginBottom = "10%"
-
-    let livesEle = document.createElement("div")
-    livesEle.classList.add('modalSelect')
-    livesEle.style.fontSize = "1em"
-    livesEle.style.textShadow = ""
-    livesEle.textContent = "Lives: " + lives
-    livesEle.style.marginBottom = "10%"
-
-    let paramsDiv = document.createElement("div")
-    paramsDiv.classList.add('paramsDiv')
-
-    paramsDiv.appendChild(highScoreEle)
-    paramsDiv.appendChild(scoreEle)
-    paramsDiv.appendChild(livesEle)
-
-    uiDiv.appendChild(lostText)
-    uiDiv.appendChild(settings)
-    mainlayout.appendChild(h1)
-    mainlayout.appendChild(h1_2)
-    mainlayout.appendChild(uiDiv)
-    mainlayout.appendChild(paramsDiv)
-    modal.appendChild(mainlayout)
-    modal.onclick = () => { location.reload() }
-
-    document.body.appendChild(modal)
-
-}
-
 function pause() {
     if (!paused) {
         paused = true
         let modal = document.createElement("div")
         modal.id = "pause"
         let pauseText = document.createElement("span")
+
         let pressP = document.createElement("span")
-        pressP.textContent = "press 'p' to continue"
+        pressP.textContent = "press 'p' to resume"
         pressP.style.animation = "credits 0.7s infinite cubic-bezier(1,0,0,1)"
         pressP.classList.add("pressP")
+
+        let pressS = document.createElement("span")
+        pressS.textContent = "press 's' to save and quit"
+        pressS.style.animation = "credits 0.0s infinite cubic-bezier(1,0,0,1)"
+        pressS.classList.add("pressS")
+
+
         let screenBottom = document.createElement("div")
         screenBottom.classList.add('screen-bottom')
         let red = document.createElement("div")
@@ -750,6 +687,8 @@ function pause() {
 
         modal.appendChild(pauseText)
         modal.appendChild(pressP)
+        modal.appendChild(pressS)
+
         modal.classList.add("pause")
         modal.appendChild(screenBottom)
 
@@ -763,7 +702,7 @@ function pause() {
 }
 
 function save() {
-    let game = []
+    let game = {}
     game["highscore"] = highScore
 
     game["sequence"] = sequence
@@ -774,7 +713,7 @@ function save() {
     game["gridSize"] = gridSize
     game["side"] = side
 
-    game["cells"] = cells
+    game["cells"] = JSON.stringify(cells)
     game["displacement"] = displacement1
     game["snake"] = snake
     game["letterSequence"] = letterSequence
@@ -803,10 +742,30 @@ function save() {
     game["powerUpsNum"] = powerUpsNum
 
     game["currentTime"] = currentTime
-
+    console.log(game)
     sessionStorage.setItem("game", JSON.stringify(game))
 
-    saved()
+    // saved()
+    if (document.getElementById("savedSuccesText") == null) {
+        let pauseModal = document.getElementById("pause")
+        let savedSuccesText = document.createElement("span")
+        savedSuccesText.id = "savedSuccesText"
+        savedSuccesText.classList.add("savedSuccesText")
+        savedSuccesText.textContent = "Saved Succesfully!"
+
+        savedSuccesText.style.animation = "credits 0.0s infinite cubic-bezier(1,0,0,1)"
+        savedSuccesText.classList.add("savedText")
+
+
+        pauseModal.appendChild(savedSuccesText)
+
+
+        // setTimeout(() => { window.location.reload() }, 250)
+    } else {
+        document.removeChild(document.getElementById("savedSuccesText"))
+    }
+
+
 }
 
 function setup() {
@@ -833,10 +792,6 @@ function setup() {
 
     }
 
-    document.getElementById("save").onclick = function () {
-        save()
-    }
-
     document.addEventListener('keydown', function (e) {
         if (e.key === "ArrowLeft") {
             if (displacement1 != side) displacement1 = -side
@@ -854,6 +809,9 @@ function setup() {
                 settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
             }
             if (displacement1 != -1) displacement1 = 1
+        }
+        else if (e.key === "s" && paused) {
+            save()
         }
         else if (e.key === "s" && numPlayers > 1) { if (displacement2 != -1) displacement2 = 1 }
         else if (e.key === "w" && numPlayers > 1) { if (displacement2 != 1) displacement2 = -1 }
@@ -881,7 +839,7 @@ function setup() {
                     highScore = sessionStorage.getItem('highScore' + difficulty)
                     console.log("difficulty: ", difficulty)
 
-                    if (difficulty === "easy") {
+                    if (difficulty === "easy" && JSON.parse(sessionStorage.getItem('game')) != null) {
                         sequenceLenght = 4
                     }
 
@@ -902,7 +860,7 @@ function setup() {
         }
     })
 
-    setUpGui();  // debug
+    // setUpGui();  // debug
 }
 
 
@@ -917,11 +875,11 @@ function setUpGui() {
         let squareSide = null
         console.log("hmm difficulty now: ", difficulty)
         if (gridSize == 80) {
-            sequenceLenght = 20
+            if (JSON.parse(sessionStorage.getItem('game')) != null) sequenceLenght = 20
             squareSide = 1
         }
         else if (gridSize == 40) {
-            sequenceLenght = 10
+            if (JSON.parse(sessionStorage.getItem('game')) != null) sequenceLenght = 10
             squareSide = 2
         }
         else if (gridSize == 20) {
@@ -933,18 +891,23 @@ function setUpGui() {
         side = Math.floor(size / squareSide)
         console.log(side)
 
-        if (cells === "") {
+        if (cells === "" || typeof cells === "undefined") {
             cells = []
             console.log("generating cells")
             for (let i = 0; i < side * side; i++)
                 cells[i] = document.getElementById("square" + i)
+
             console.log(cells)
+            console.log("cells generated!")
         }
+
         updateSnakes(true, 0, true, 10 * side)
         console.log(snake)
 
         let str = "linear-gradient(0.25turn,#300350,#94167f)"
         document.body.style.background = str
+
+        if (JSON.parse(sessionStorage.getItem('game')) != null) placeSequence()
     }
 }
 
