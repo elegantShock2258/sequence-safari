@@ -166,7 +166,7 @@ function updatePortal() {
 function generateSequence() {
     let i = 0;
     let a = 360 * Math.random()
-    console.log("sequence length: ",sequenceLenght)
+    console.log("sequence length: ", sequenceLenght)
     while (i != sequenceLenght) {
         let j = Math.floor(side * side * Math.random())
         if (j in snake) continue
@@ -426,7 +426,7 @@ function initialSetup() {
     easyOption20.textContent = "20"
     easyOption20.classList.add('easyOption')
     let hardOption40 = document.createElement("option")
-    hardOption40.value = 40 
+    hardOption40.value = 40
     hardOption40.textContent = "40"
     hardOption40.classList.add('hardOption')
 
@@ -436,7 +436,7 @@ function initialSetup() {
 
     gridSizeContainer.appendChild(gridSizeText)
     gridSizeContainer.appendChild(gridDropdown)
-    
+
     startGameText = document.createElement("div")
     startGameText.classList.add('modalSelect')
     startGameText.classList.add('modalSelectText')
@@ -594,15 +594,58 @@ function pause() {
 
 }
 
+function save() {
+    let game = []
+    game["highscore"] = highScore
+
+    game["sequence"] = sequence
+    game["sequenceBackup"] = sequenceBackup
+
+    game["difficulty"] = difficulty
+    game["portal"] = sequenceBackup
+    game["gridSize"] = gridSize
+    game["size"] = size
+    game["side"] = side
+    
+    game["cells"] = cells
+    game["displacement"] = displacement
+    game["snake"] = snake
+    game["letterSequence"] = letterSequence
+    game["colorSequence"] = colorSequence
+    
+    game["sequenceFinsihed"] = sequenceFinsihed
+    game["sequenceLenght"] = sequenceLenght
+    
+    game["currentTime"] = currentTime
+    
+    
+    game["score"] = score
+    game["lives"] = lives
+    
+    
+    game["paused"] = paused
+    game["portals"] = portals
+    
+    game["letterSequence"] = letterSequence
+    game["colorSequence"] = colorSequence
+    game["sequenceFinished"] = sequenceFinsihed
+    game["sequenceLenght"] = sequenceLenght
+    
+
+    game["currentTime"] = currentTime
+
+    sessionStorage.setItem("game",JSON.stringify(game))
+}
 
 function setup() {
     console.log(highScore)
-    initialSetup()
+    // initialSetup()
 
     // gridSize = askGridSize()
-    // initialised = true
-    // difficulty = "easy"
-
+    initialised = true
+    difficulty = "easy"
+    gridSize = 20
+    paused = true
     // paused = true
 
     document.getElementById("leftBtn").onclick = function () {
@@ -617,6 +660,10 @@ function setup() {
     document.getElementById("downBtn").onclick = function () {
         if (displacement != -1) displacement = 1
 
+    }
+
+    document.getElementById("save").onclick = function () {
+        save()
     }
 
     document.addEventListener('keydown', function (e) {
@@ -661,7 +708,7 @@ function setup() {
                         sequenceLenght = 4
                     }
 
-                    console.log(difficulty,gridSize,sequenceLenght)
+                    console.log(difficulty, gridSize, sequenceLenght)
 
                     document.body.removeChild(modal)
                     initialised = true
@@ -681,10 +728,7 @@ function setup() {
 
 
     setUpGui();
-
-
 }
-
 
 
 function setUpGui() {
