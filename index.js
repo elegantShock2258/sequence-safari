@@ -5,37 +5,96 @@ let barObject = document.getElementById('barObject')
 let botScore = document.getElementById('botScore')
 let sequencePrompt = document.getElementById('sequencePrompt')
 
-let blocks = []
 
-let sequence = []
-let sequenceBackup = []
-let letterSequence = []
-let colorSequence = []
-let sequenceFinsihed = true
-let sequenceLenght = 9
-let colorDiff = 10
 
-let defaultTime = 50000 //50s
-let currentTime = 0
-let timeIncrement = 75
+    let sequence = []
+    let sequenceBackup = []
+    let letterSequence = []
+    let colorSequence = []
+    let sequenceFinsihed = true
+    let sequenceLenght = 9
 
-let factor = 1
+    let currentTime = 0
 
-let score = 0
-let highScore = 0
-let lives = 3
 
-let message = ""
+    let score = 0
+    let highScore = 0
+    let lives = 3
 
-let initialised = false
-let paused = false
 
-let portalSprites = ["Assets/portal1.png", "Assets/portal2.png", "Assets/portal3.png", "Assets/portal4.png"]
-let portals = [] //start,end
+    let initialised = false
+    let paused = false
 
+    let portals = [] //start,end
+
+
+    let side = 0
+    let cells = ""
+    let displacement = 1
+
+    let snake = []
+
+
+    let startGameText = ""
+    let settings = ""
+
+    let difficulty = ""
+    let gridSize = 20
+
+if (sessionStorage.getItem('game') == null) {
+
+} else {
+    let game = JSON.parse(sessionStorage.getItem('game'))
+    game["highscore"] = highScore
+
+    game["sequence"] = sequence
+    game["sequenceBackup"] = sequenceBackup
+
+    game["difficulty"] = difficulty
+    game["portal"] = sequenceBackup
+    game["gridSize"] = gridSize
+    game["side"] = side
+
+    game["cells"] = cells
+    game["displacement"] = displacement
+    game["snake"] = snake
+    game["letterSequence"] = letterSequence
+    game["colorSequence"] = colorSequence
+    game["sequenceFinsihed"] = sequenceFinsihed
+    game["sequenceLenght"] = sequenceLenght
+
+
+    game["score"] = score
+    game["lives"] = lives
+
+
+    game["paused"] = paused
+    game["portals"] = portals
+
+    game["powerUpCoords"] = powerUpCoords
+    game["powerUpCoordBackup"] = powerUpCoordBackup
+    game["powerUpsNum"] = powerUpsNum
+
+    game["currentTime"] = currentTime
+
+}
+
+let modal = ""
+let lostText = ""
 let slider = []
 
+let portalSprites = ["Assets/portal1.png", "Assets/portal2.png", "Assets/portal3.png", "Assets/portal4.png"]
+let colorDiff = 10
+let selectDropdown = null
+let gridDropdown = null
 let randomNumber = Math.random()
+
+let message = ""
+let factor = 1
+let timeIncrement = 75
+let defaultTime = 50000 //50s
+
+let blocks = []
 // powerups: shrink, life, time, freeze time ,removeSomeBlocks
 
 let powerUps = ["Assets/compressPixelated.png", "Assets/heart.png", "Assets/clock.webp", "Assets/pause.png", "Assets/qmark.png"]
@@ -286,25 +345,6 @@ function updateSnake(first = false) {
     cells[snake[0]].classList.add('head')
     cells[snake[0]].innerHTML = '<span></span>'
 }
-
-
-let side = 0
-let cells = []
-let displacement = 1
-
-let snake = []
-
-
-let modal = ""
-let lostText = ""
-let startGameText = ""
-let settings = ""
-
-let difficulty = ""
-let gridSize = 20
-let selectDropdown = null
-let gridDropdown = null
-
 function initialSetup() {
     paused = true
     modal = document.createElement("div")
@@ -558,13 +598,90 @@ function gameLost(message) {
 }
 
 
+function saved(message) {
+    paused = true
+
+    option = 23
+
+    modal = document.createElement("div")
+    modal.classList.add('modal')
+    modal.id = "startup"
+
+    let mainlayout = document.createElement("div")
+    mainlayout.classList.add('savedLayout')
+
+    let h1 = document.createElement("h1")
+    h1.classList.add('h1Lost')
+    h1.textContent = "Sequence"
+    let h1_2 = document.createElement("h1")
+    h1_2.classList.add('h1Lost')
+    h1_2.textContent = "Safari"
+    h1_2.style.alignSelf = "flex-end"
+
+    let uiDiv = document.createElement("div")
+    uiDiv.classList.add('uiDev')
+
+    lostText = document.createElement("div")
+    lostText.classList.add('modalSelect')
+    lostText.classList.add('youLostText')
+
+    lostText.textContent = "Game Saved!"
+
+    settings = document.createElement("div")
+    settings.classList.add('modalSelect')
+    settings.textContent = message
+
+    let highScoreEle = document.createElement("div")
+    highScoreEle.classList.add('modalSelect')
+    highScoreEle.style.fontSize = "1em"
+    highScoreEle.style.textShadow = ""
+    highScoreEle.textContent = "High Score: " + highScore
+    highScoreEle.style.marginBottom = "10%"
+
+    let scoreEle = document.createElement("div")
+    scoreEle.classList.add('modalSelect')
+    scoreEle.style.fontSize = "1em"
+    scoreEle.style.textShadow = ""
+    scoreEle.textContent = "Score: " + score
+    scoreEle.style.marginBottom = "10%"
+
+    let livesEle = document.createElement("div")
+    livesEle.classList.add('modalSelect')
+    livesEle.style.fontSize = "1em"
+    livesEle.style.textShadow = ""
+    livesEle.textContent = "Lives: " + lives
+    livesEle.style.marginBottom = "10%"
+
+    let paramsDiv = document.createElement("div")
+    paramsDiv.classList.add('paramsDiv')
+
+    paramsDiv.appendChild(highScoreEle)
+    paramsDiv.appendChild(scoreEle)
+    paramsDiv.appendChild(livesEle)
+
+    uiDiv.appendChild(lostText)
+    uiDiv.appendChild(settings)
+    mainlayout.appendChild(h1)
+    mainlayout.appendChild(h1_2)
+    mainlayout.appendChild(uiDiv)
+    mainlayout.appendChild(paramsDiv)
+    modal.appendChild(mainlayout)
+    modal.onclick = () => { location.reload() }
+
+    document.body.appendChild(modal)
+
+}
+
 function pause() {
     if (!paused) {
         paused = true
         let modal = document.createElement("div")
         modal.id = "pause"
         let pauseText = document.createElement("span")
-
+        let pressP = document.createElement("span")
+        pressP.textContent = "press 'p' to continue"
+        pressP.style.animation = "credits 0.7s infinite cubic-bezier(1,0,0,1)"
+        pressP.classList.add("pressP")
         let screenBottom = document.createElement("div")
         screenBottom.classList.add('screen-bottom')
         let red = document.createElement("div")
@@ -582,6 +699,7 @@ function pause() {
         pauseText.classList.add("pause-text")
 
         modal.appendChild(pauseText)
+        modal.appendChild(pressP)
         modal.classList.add("pause")
         modal.appendChild(screenBottom)
 
@@ -604,48 +722,52 @@ function save() {
     game["difficulty"] = difficulty
     game["portal"] = sequenceBackup
     game["gridSize"] = gridSize
-    game["size"] = size
     game["side"] = side
-    
+
     game["cells"] = cells
     game["displacement"] = displacement
     game["snake"] = snake
     game["letterSequence"] = letterSequence
     game["colorSequence"] = colorSequence
-    
+
     game["sequenceFinsihed"] = sequenceFinsihed
     game["sequenceLenght"] = sequenceLenght
-    
+
     game["currentTime"] = currentTime
-    
-    
+
+
     game["score"] = score
     game["lives"] = lives
-    
-    
+
+
     game["paused"] = paused
     game["portals"] = portals
-    
+
     game["letterSequence"] = letterSequence
     game["colorSequence"] = colorSequence
     game["sequenceFinished"] = sequenceFinsihed
     game["sequenceLenght"] = sequenceLenght
-    
+
+    game["powerUpCoords"] = powerUpCoords
+    game["powerUpCoordBackup"] = powerUpCoordBackup
+    game["powerUpsNum"] = powerUpsNum
 
     game["currentTime"] = currentTime
 
-    sessionStorage.setItem("game",JSON.stringify(game))
+    sessionStorage.setItem("game", JSON.stringify(game))
+
+    saved()
 }
 
 function setup() {
     console.log(highScore)
-    // initialSetup()
+    initialSetup()
 
     // gridSize = askGridSize()
-    initialised = true
-    difficulty = "easy"
-    gridSize = 20
-    paused = true
+    // initialised = true
+    // difficulty = "easy"
+    // gridSize = 20
+    // paused = true
     // paused = true
 
     document.getElementById("leftBtn").onclick = function () {
@@ -757,9 +879,11 @@ function setUpGui() {
 
         side = Math.floor(size / squareSide)
         console.log(side)
-        for (let i = 0; i < side * side; i++)
-            cells[i] = document.getElementById("square" + i)
 
+        if (cells == "") {
+            for (let i = 0; i < side * side; i++)
+                cells[i] = document.getElementById("square" + i)
+        }
         updateSnake(snake)
 
         let str = "linear-gradient(0.25turn,#300350,#94167f)"

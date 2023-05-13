@@ -56,7 +56,8 @@ body {
     align-items: center;
 
     font-family: 'Bebas Neue';
-    font-size: xx-large;
+    font-family: 'Press Start 2P';
+    font-size: x-large;
 }
 
 .sequencePrompt {
@@ -305,6 +306,20 @@ body {
     flex-direction: column;
 }
 
+.savedLayout {
+    width: 85vh;
+    height: 75vh;
+    background-color: green;
+    border-radius: 10px;
+    border: 3px solid #30303080;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.paramsDiv{
+    display: flex;
+}
 .dialogueLayoutLost {
     width: 85vh;
     height: 75vh;
@@ -359,7 +374,7 @@ h1 {
 }
 
 
-.pause-text {
+.pause-text,.pressP {
     position: absolute;
     top: 0;
     left: 0;
@@ -397,6 +412,12 @@ h1 {
         flick 1s infinite,
         big-jump 5ms infinite;
 
+}
+
+.pressP{
+    position: inherit;
+    top:15vh;
+    font-size: 150%;
 }
 
 .white {
