@@ -5,79 +5,39 @@ let barObject = document.getElementById('barObject')
 let botScore = document.getElementById('botScore')
 let sequencePrompt = document.getElementById('sequencePrompt')
 
+let sequence = []
+let sequenceBackup = []
+let letterSequence = []
+let colorSequence = []
+let sequenceFinsihed = true
+let sequenceLenght = 9
+
+let currentTime = 0
 
 
-    let sequence = []
-    let sequenceBackup = []
-    let letterSequence = []
-    let colorSequence = []
-    let sequenceFinsihed = true
-    let sequenceLenght = 9
-
-    let currentTime = 0
+let score = 0
+let highScore = 0
+let lives = 3
 
 
-    let score = 0
-    let highScore = 0
-    let lives = 3
+let initialised = false
+let paused = false
+
+let portals = [] //start,end
 
 
-    let initialised = false
-    let paused = false
+let side = 0
+let cells = ""
+let displacement = 1
 
-    let portals = [] //start,end
-
-
-    let side = 0
-    let cells = ""
-    let displacement = 1
-
-    let snake = []
+let snake = []
 
 
-    let startGameText = ""
-    let settings = ""
+let startGameText = ""
+let settings = ""
 
-    let difficulty = ""
-    let gridSize = 20
-
-if (sessionStorage.getItem('game') == null) {
-
-} else {
-    let game = JSON.parse(sessionStorage.getItem('game'))
-    game["highscore"] = highScore
-
-    game["sequence"] = sequence
-    game["sequenceBackup"] = sequenceBackup
-
-    game["difficulty"] = difficulty
-    game["portal"] = sequenceBackup
-    game["gridSize"] = gridSize
-    game["side"] = side
-
-    game["cells"] = cells
-    game["displacement"] = displacement
-    game["snake"] = snake
-    game["letterSequence"] = letterSequence
-    game["colorSequence"] = colorSequence
-    game["sequenceFinsihed"] = sequenceFinsihed
-    game["sequenceLenght"] = sequenceLenght
-
-
-    game["score"] = score
-    game["lives"] = lives
-
-
-    game["paused"] = paused
-    game["portals"] = portals
-
-    game["powerUpCoords"] = powerUpCoords
-    game["powerUpCoordBackup"] = powerUpCoordBackup
-    game["powerUpsNum"] = powerUpsNum
-
-    game["currentTime"] = currentTime
-
-}
+let difficulty = ""
+let gridSize = 20
 
 let modal = ""
 let lostText = ""
@@ -101,6 +61,44 @@ let powerUps = ["Assets/compressPixelated.png", "Assets/heart.png", "Assets/cloc
 let powerUpCoords = []
 let powerUpCoordBackup = []
 let powerUpsNum = []
+
+if (sessionStorage.getItem('game') != null) {
+    console.log("cakked")
+    let game = JSON.parse(sessionStorage.getItem('game'))
+    highScore = game["highscore"]
+
+    sequence = game["sequence"]
+    sequenceBackup = game["sequenceBackup"]
+
+    difficulty = game["difficulty"]
+    sequenceBackup = game["sequenceBackup"]
+    gridSize = game["gridSize"]
+    side = game["side"]
+
+    cells = game["cells"]
+    displacement = game["displacement"]
+    snake = game["snake"]
+    letterSequence = game["letterSequence"]
+    colorSequence = game["colorSequence"]
+    sequenceFinsihed = game["sequenceFinsihed"]
+    sequenceLenght = game["sequenceLenght"]
+
+
+    score = game["score"]
+    lives = game["lives"]
+
+
+    paused = game["paused"]
+    portals = game["portals"]
+
+    powerUpCoords = game["powerUpCoords"]
+    powerUpCoordBackup = game["powerUpCoordBackup"]
+    powerUpsNum = game["powerUpsNum"]
+
+    currentTime = game["currentTime"]
+}
+
+
 let powerUpMethod = [() => {
     if (snake.length != 1) {
         const tail = snake.pop()
@@ -720,7 +718,7 @@ function save() {
     game["sequenceBackup"] = sequenceBackup
 
     game["difficulty"] = difficulty
-    game["portal"] = sequenceBackup
+    game["sequenceBackup"] = sequenceBackup
     game["gridSize"] = gridSize
     game["side"] = side
 
@@ -880,9 +878,12 @@ function setUpGui() {
         side = Math.floor(size / squareSide)
         console.log(side)
 
-        if (cells == "") {
+        if (cells === "") {
+            cells = []
+            console.log("generating cells")
             for (let i = 0; i < side * side; i++)
                 cells[i] = document.getElementById("square" + i)
+            console.log(cells)
         }
         updateSnake(snake)
 
