@@ -106,12 +106,21 @@ if (sessionStorage.getItem('game') != null) {
 
 // change powerup implt for second snake.
 
-let powerUpMethod = [(snake) => {
-    if (snake.length != 1) {
-        const tail = snake.pop()
-        cells[tail].classList.remove('snake')
-        cells[tail].classList.remove('tail')
-        cells[tail].innerText = ''
+let powerUpMethod = [(snakeNumber) => {
+    if (snakeNumber == 1) {
+        if (snake.length != 1) {
+            const tail = snake.pop()
+            cells[tail].classList.remove('snake')
+            cells[tail].classList.remove('tail')
+            cells[tail].innerText = ''
+        }
+    } else if (snakeNumber == 2) {
+        if (snake2.length != 1) {
+            const tail = snake2.pop()
+            cells[tail].classList.remove('snake2')
+            cells[tail].classList.remove('tail2')
+            cells[tail].innerText = ''
+        }
     }
 }, () => {
     lives++
@@ -802,14 +811,12 @@ function save() {
 
 function setup() {
     console.log(highScore)
-    // initialSetup()
+    initialSetup()
 
-    // gridSize = askGridSize()
-    initialised = true
-    difficulty = "easy"
-    gridSize = 20
-    numPlayers = 2
-    // paused = true
+    // initialised = true
+    // difficulty = "easy"
+    // gridSize = 20
+    // numPlayers = 2
     // paused = true
 
     document.getElementById("leftBtn").onclick = function () {
@@ -1045,7 +1052,7 @@ function checkCollision(coord, displacement, snakeNumber) {
 
     if (sequence.includes(grid)) {
         console.log("block collision " + grid)
-        return blockCollided(grid)
+        return blockCollided(grid, snakeNumber)
 
     }
 
@@ -1094,7 +1101,10 @@ function checkCollision(coord, displacement, snakeNumber) {
             console.log("power up: " + index)
             powerUpCoords = powerUpCoords.splice(powerUpCoords.indexOf(coord), 1)
             console.log(powerUpCoords)
-            powerUpMethod[powerUpsNum[index]]()
+            if (powerUpsNum[index] != 0) powerUpMethod[powerUpsNum[index]]()
+            else if (powerUpsNum[index] == 0) {
+                powerUpMethod[powerUpsNum[index]](snakeNumber)
+            }
             return false
         }
     }
@@ -1131,7 +1141,7 @@ function checkCollision(coord, displacement, snakeNumber) {
     return false
 }
 
-function blockCollided(i) {
+function blockCollided(i, snakeNumber) {
 
     let color = sequenceBackup.indexOf(i)
     let last = sequence.pop()
@@ -1164,7 +1174,7 @@ function blockCollided(i) {
         cells[i].style.background = ""
         cells[i].innerText = ''
 
-        grow(true)
+        grow(true, snakeNumber)
         console.log("sequence finsihed!")
 
         let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,40%)").toLocaleString() + "," + Array(sequence.length).fill("black").toLocaleString() + ")"
@@ -1188,44 +1198,128 @@ function blockCollided(i) {
         return true
     }
 }
-function grow(grow) {
-    if (grow) {
-        document.getElementById("grow").play()
+function grow(grow, snakeNumber) {
+    if (numPlayers == 1) {
+        if (grow) {
 
-        cells[snake[0]].innerText = ''
-        cells[snake[0]].classList.remove('head')
-        const tail = snake[snake.length - 1]
-        cells[tail].classList.remove('snake')
-        cells[tail].classList.remove('tail')
-        cells[tail].innerText = ''
-        snake.unshift((snake[0] + displacement1))
-        cells[snake[snake.length - 1]].classList.add('tail')
-        cells[snake[snake.length - 1]].classList.add('snake')
-        cells[snake[snake.length - 1]].innerText = ''
+            document.getElementById("grow").play()
 
-        cells[snake[0]].classList.add('snake')
-        cells[snake[0]].classList.add('head')
-        cells[snake[0]].innerText = ''
-    } else {
-        cells[snake[0]].innerText = ''
-        cells[snake[0]].classList.remove('head')
-        const delTail = snake.pop()
-        cells[delTail].classList.remove('snake')
-        cells[delTail].classList.remove('tail')
-        cells[delTail].innerText = ''
+            cells[snake[0]].innerText = ''
+            cells[snake[0]].classList.remove('head')
+            const tail = snake[snake.length - 1]
+            cells[tail].classList.remove('snake')
+            cells[tail].classList.remove('tail')
+            cells[tail].innerText = ''
+            snake.unshift((snake[0] + displacement1))
+            cells[snake[snake.length - 1]].classList.add('tail')
+            cells[snake[snake.length - 1]].classList.add('snake')
+            cells[snake[snake.length - 1]].innerText = ''
 
-        const tail = snake.pop()
-        cells[tail].classList.remove('snake')
-        cells[tail].classList.remove('tail')
-        cells[tail].innerText = ''
-        snake.unshift((snake[0] + displacement1))
-        cells[snake[snake.length - 1]].classList.add('tail')
-        cells[snake[snake.length - 1]].classList.add('snake')
-        cells[snake[snake.length - 1]].innerText = ''
+            cells[snake[0]].classList.add('snake')
+            cells[snake[0]].classList.add('head')
+            cells[snake[0]].innerText = ''
+        } else {
+            cells[snake[0]].innerText = ''
+            cells[snake[0]].classList.remove('head')
+            const delTail = snake.pop()
+            cells[delTail].classList.remove('snake')
+            cells[delTail].classList.remove('tail')
+            cells[delTail].innerText = ''
 
-        cells[snake[0]].classList.add('snake')
-        cells[snake[0]].classList.add('head')
-        cells[snake[0]].innerText = 'UwU'
+            const tail = snake.pop()
+            cells[tail].classList.remove('snake')
+            cells[tail].classList.remove('tail')
+            cells[tail].innerText = ''
+            snake.unshift((snake[0] + displacement1))
+            cells[snake[snake.length - 1]].classList.add('tail')
+            cells[snake[snake.length - 1]].classList.add('snake')
+            cells[snake[snake.length - 1]].innerText = ''
+
+            cells[snake[0]].classList.add('snake')
+            cells[snake[0]].classList.add('head')
+            cells[snake[0]].innerText = 'UwU'
+        }
+    } else if (numPlayers > 1) {
+        if (snakeNumber == 1) {
+            if (grow) {
+
+                document.getElementById("grow").play()
+
+                cells[snake[0]].innerText = ''
+                cells[snake[0]].classList.remove('head')
+                const tail = snake[snake.length - 1]
+                cells[tail].classList.remove('snake')
+                cells[tail].classList.remove('tail')
+                cells[tail].innerText = ''
+                snake.unshift((snake[0] + displacement1))
+                cells[snake[snake.length - 1]].classList.add('tail')
+                cells[snake[snake.length - 1]].classList.add('snake')
+                cells[snake[snake.length - 1]].innerText = ''
+
+                cells[snake[0]].classList.add('snake')
+                cells[snake[0]].classList.add('head')
+                cells[snake[0]].innerText = ''
+            } else {
+                cells[snake[0]].innerText = ''
+                cells[snake[0]].classList.remove('head')
+                const delTail = snake.pop()
+                cells[delTail].classList.remove('snake')
+                cells[delTail].classList.remove('tail')
+                cells[delTail].innerText = ''
+
+                const tail = snake.pop()
+                cells[tail].classList.remove('snake')
+                cells[tail].classList.remove('tail')
+                cells[tail].innerText = ''
+                snake.unshift((snake[0] + displacement1))
+                cells[snake[snake.length - 1]].classList.add('tail')
+                cells[snake[snake.length - 1]].classList.add('snake')
+                cells[snake[snake.length - 1]].innerText = ''
+
+                cells[snake[0]].classList.add('snake')
+                cells[snake[0]].classList.add('head')
+                cells[snake[0]].innerText = 'UwU'
+            }
+        } else if (snakeNumber == 2) {
+            if (grow) {
+
+                document.getElementById("grow").play()
+
+                cells[snake2[0]].innerText = ''
+                cells[snake2[0]].classList.remove('head2')
+                const tail = snake2[snake2.length - 1]
+                cells[tail].classList.remove('snake2')
+                cells[tail].classList.remove('tail2')
+                cells[tail].innerText = ''
+                snake2.unshift((snake2[0] + displacement1))
+                cells[snake2[snake2.length - 1]].classList.add('tail2')
+                cells[snake2[snake2.length - 1]].classList.add('snake2')
+                cells[snake2[snake2.length - 1]].innerText = ''
+                cells[snake2[0]].classList.add('snake2')
+                cells[snake2[0]].classList.add('head2')
+                cells[snake2[0]].innerText = ''
+            } else {
+                cells[snake2[0]].innerText = ''
+                cells[snake2[0]].classList.remove('head2')
+                const delTail = snake2.pop()
+                cells[delTail].classList.remove('snake')
+                cells[delTail].classList.remove('tail2')
+                cells[delTail].innerText = ''
+
+                const tail = snake2.pop()
+                cells[tail].classList.remove('snake2')
+                cells[tail].classList.remove('tail2')
+                cells[tail].innerText = ''
+                snake2.unshift((snake2[0] + displacement1))
+                cells[snake2[snake2.length - 1]].classList.add('tail2')
+                cells[snake2[snake2.length - 1]].classList.add('snake2')
+                cells[snake2[snake2.length - 1]].innerText = ''
+
+                cells[snake2[0]].classList.add('snake2')
+                cells[snake2[0]].classList.add('head2')
+                cells[snake2[0]].innerText = 'UwU'
+            }
+        }
     }
 }
 
