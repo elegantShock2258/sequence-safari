@@ -125,8 +125,8 @@ body {
 }
 
 .head {
-    background-color:greenyellow;
-    content:"UwU";
+    background-color: greenyellow;
+    content: "UwU";
 }
 
 .head,
@@ -138,15 +138,16 @@ body {
     color: white;
     font-family: 'Press Start 2P', Courier, monospace;
 }
-                                                                                /* second snake */
-/* .snake2 {
+
+/* second snake */
+.snake2 {
     background-color: #ff00f2f0;
     border: 2px transparent solid;
 }
 
 .head2 {
-    background-color:greenyellow;
-    content:"UwU";
+    background-color: #ff00f2f0;
+    content: "UwU";
 }
 
 .head2,
@@ -159,18 +160,18 @@ body {
     font-family: 'Press Start 2P', Courier, monospace;
 }
 
-*/
-.block  {
+
+.block {
     font-family: 'Press Start 2P';
     font-weight: bolder;
     border: 2px aliceblue solid;
     color: #303030;
     font-size: smaller;
-} 
+}
 
-.chooseDifficultyContainer{
+.chooseDifficultyContainer {
     display: flex;
-    color:white;
+    color: white;
 
     gap: 10%;
 
@@ -178,9 +179,11 @@ body {
     font-family: 'Press Start 2P', Courier, monospace;
 
 }
-.selectDropdown,opiton{
-    background-color:#101010;
-    color:white;
+
+.selectDropdown,
+opiton {
+    background-color: #101010;
+    color: white;
     padding: 10px;
     font-family: 'Press Start 2P', Courier, monospace;
 
@@ -243,14 +246,17 @@ body {
 
     gap: 5%;
 }
-.saveBtn{
-    height:6vh;
+
+.saveBtn {
+    height: 6vh;
 }
-.imgScoreContainer{
-    display:flex;
+
+.imgScoreContainer {
+    display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .modalSelect {
     width: 100%;
     height: 4vh;
@@ -317,9 +323,10 @@ body {
     flex-direction: column;
 }
 
-.paramsDiv{
+.paramsDiv {
     display: flex;
 }
+
 .dialogueLayoutLost {
     width: 85vh;
     height: 75vh;
@@ -374,7 +381,8 @@ h1 {
 }
 
 
-.pause-text,.pressP {
+.pause-text,
+.pressP {
     position: absolute;
     top: 0;
     left: 0;
@@ -414,9 +422,9 @@ h1 {
 
 }
 
-.pressP{
+.pressP {
     position: inherit;
-    top:15vh;
+    top: 15vh;
     font-size: 150%;
 }
 

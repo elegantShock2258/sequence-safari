@@ -28,10 +28,12 @@ let portals = [] //start,end
 
 let side = 0
 let cells = ""
-let displacement = 1
+let displacement1 = 1
+let displacement2 = side
 
 let snake = []
-
+let snake2 = []
+let numPlayers = 1
 
 let startGameText = ""
 let settings = ""
@@ -46,6 +48,7 @@ let slider = []
 let portalSprites = ["Assets/portal1.png", "Assets/portal2.png", "Assets/portal3.png", "Assets/portal4.png"]
 let colorDiff = 10
 let selectDropdown = null
+let playerDropdown = null
 let gridDropdown = null
 let randomNumber = Math.random()
 
@@ -62,6 +65,8 @@ let powerUpCoords = []
 let powerUpCoordBackup = []
 let powerUpsNum = []
 
+// press s on pause screen to save game
+
 if (sessionStorage.getItem('game') != null) {
     console.log("cakked")
     let game = JSON.parse(sessionStorage.getItem('game'))
@@ -76,7 +81,7 @@ if (sessionStorage.getItem('game') != null) {
     side = game["side"]
 
     cells = game["cells"]
-    displacement = game["displacement"]
+    displacement1 = game["displacement"]
     snake = game["snake"]
     letterSequence = game["letterSequence"]
     colorSequence = game["colorSequence"]
@@ -99,7 +104,9 @@ if (sessionStorage.getItem('game') != null) {
 }
 
 
-let powerUpMethod = [() => {
+// change powerup implt for second snake.
+
+let powerUpMethod = [(snake) => {
     if (snake.length != 1) {
         const tail = snake.pop()
         cells[tail].classList.remove('snake')
@@ -116,13 +123,13 @@ let powerUpMethod = [() => {
     playground.classList.add("playground-freeze")
     document.addEventListener('keydown', function (e) {
         if (e.key === "ArrowLeft" || e.key === "a") {
-            move(-side)
+            moveSnake1(-side)
         } else if (e.key === "ArrowRight" || e.key === "d") {
-            move(side)
+            moveSnake1(side)
         } else if (e.key === "ArrowDown" || e.key === "s") {
-            move(1)
+            moveSnake1(1)
         } else if (e.key === "ArrowUp" || e.key === "w") {
-            move(-1)
+            moveSnake1(-1)
         }
     })
     let t = setTimeout(() => {
@@ -284,20 +291,23 @@ function placePowerUps() {
 function updateGame() {
 
     currentTime += timeIncrement
-    if (sequenceFinsihed) {
-        generateSequence()
-        placeSequence()
-        sequenceFinsihed = false
-        console.log(sequence)
+    // TODO: uncomment when 2 players is working
 
-        if (difficulty != "easy") {
-            for (let i = 0; i < 3 * Math.random(); i++) {
-                setUpPortal()
-                updatePortal()
-            }
-            placePowerUps()
-        }
-    }
+
+    // if (sequenceFinsihed) {
+    //     generateSequence()
+    //     placeSequence()
+    //     sequenceFinsihed = false
+    //     console.log(sequence)
+
+    //     if (difficulty != "easy") {
+    //         for (let i = 0; i < 3 * Math.random(); i++) {
+    //             setUpPortal()
+    //             updatePortal()
+    //         }
+    //         placePowerUps()
+    //     }
+    // }
 
     // console.log(currentTime)
     scoreEle.textContent = "Score: " + score
@@ -328,21 +338,52 @@ function setUpGrid(width = 10, sqaureWidth = 80) {
     return width, numSquares
 }
 
-// snake
-function updateSnake(first = false) {
-    if (first) snake = [0, 0, 0, 0]
+
+// update all snakes
+
+function updateSnakes(first1 = false, spawn1 = 0, first2 = false, spawn2 = side) {
+    updateSnake1(first1, spawn1)
+    if (numPlayers > 1) updateSnake2(first2, spawn2)
+}
+
+// update snake 1
+function updateSnake1(first = false, spawn = 0) {
+    if (first) snake = [spawn, spawn, spawn, spawn]    // 0 -> first snake, side -> second snake
+
+    let classModifier = ''
 
     snake.forEach((i) => {
-        cells[i].classList.add('snake')
+        cells[i].classList.add('snake' + classModifier)
     })
 
-    cells[snake[snake.length - 1]].classList.add('tail')
+    console.log(snake)
+    cells[snake[snake.length - 1]].classList.add('tail' + classModifier)
     cells[snake[snake.length - 1]].innerHTML = '<span></span>'
 
-    cells[snake[0]].classList.add('snake')
-    cells[snake[0]].classList.add('head')
+    cells[snake[0]].classList.add('snake' + classModifier)
+    cells[snake[0]].classList.add('head' + classModifier)
     cells[snake[0]].innerHTML = '<span></span>'
 }
+
+// update snake 2
+function updateSnake2(first = false, spawn = side) {
+    if (first) snake2 = [spawn, spawn, spawn, spawn]    // 0 -> first snake, side -> second snake
+
+    let classModifier = "2"
+
+    snake2.forEach((i) => {
+        cells[i].classList.add('snake' + classModifier)
+    })
+
+    console.log(snake2)
+    cells[snake2[snake2.length - 1]].classList.add('tail' + classModifier)
+    cells[snake2[snake2.length - 1]].innerHTML = '<span></span>'
+
+    cells[snake2[0]].classList.add('snake' + classModifier)
+    cells[snake2[0]].classList.add('head' + classModifier)
+    cells[snake2[0]].innerHTML = '<span></span>'
+}
+
 function initialSetup() {
     paused = true
     modal = document.createElement("div")
@@ -371,37 +412,37 @@ function initialSetup() {
 
     // choosing players
 
-    // let playerSelectorContainer = document.createElement("div")
-    // playerSelectorContainer.classList.add('chooseDifficultyContainer')
+    let playerSelectorContainer = document.createElement("div")
+    playerSelectorContainer.classList.add('chooseDifficultyContainer')
 
-    // let numberOfPlayersText = document.createElement("span")
-    // numberOfPlayersText.textContent = "Number Of Players: "
-    // numberOfPlayersText.classList.add('textChooseDifficulty')
+    let numberOfPlayersText = document.createElement("span")
+    numberOfPlayersText.textContent = "Number Of Players: "
+    numberOfPlayersText.classList.add('textChooseDifficulty')
 
-    // playerDropdown = document.createElement("select")
-    // playerDropdown.attributes.name = "difficutly"
-    // playerDropdown.classList.add('selectDropdown')
+    playerDropdown = document.createElement("select")
+    playerDropdown.attributes.name = "difficutly"
+    playerDropdown.classList.add('selectDropdown')
 
-    // let playersNumber = document.createElement("option")
-    // playersNumber.value = "Number of players"
-    // playersNumber.textContent = "Number of players"
-    // playersNumber.disabled = true
-    // playersNumber.classList.add('chooseDifficultyDropdown')
+    let playersNumber = document.createElement("option")
+    playersNumber.value = "Number of players"
+    playersNumber.textContent = "Number of players"
+    playersNumber.disabled = true
+    playersNumber.classList.add('chooseDifficultyDropdown')
 
-    // let singlePlayer = document.createElement("option")
-    // singlePlayer.value = 1
-    // singlePlayer.textContent = "1 Player"
+    let singlePlayer = document.createElement("option")
+    singlePlayer.value = 1
+    singlePlayer.textContent = "1 Player"
 
-    // let doublePlayer = document.createElement("option")
-    // doublePlayer.value = 2
-    // doublePlayer.textContent = "2 Players"
+    let doublePlayer = document.createElement("option")
+    doublePlayer.value = 2
+    doublePlayer.textContent = "2 Players"
 
-    // playerDropdown.appendChild(playersNumber)
-    // playerDropdown.appendChild(singlePlayer)
-    // playerDropdown.appendChild(doublePlayer)
+    playerDropdown.appendChild(playersNumber)
+    playerDropdown.appendChild(singlePlayer)
+    playerDropdown.appendChild(doublePlayer)
 
-    // playerSelectorContainer.appendChild(numberOfPlayersText)
-    // playerSelectorContainer.appendChild(playerDropdown)
+    playerSelectorContainer.appendChild(numberOfPlayersText)
+    playerSelectorContainer.appendChild(playerDropdown)
 
     //-------------------------------------------------------------------------------- asking difficulty -------------------------------------------------------------------------------- 
 
@@ -446,7 +487,7 @@ function initialSetup() {
     gridSizeContainer.classList.add('chooseDifficultyContainer')
 
     let gridSizeText = document.createElement("span")
-    gridSizeText.textContent = "Grid Size:   "
+    gridSizeText.textContent = "Choose Grid Size: "
     gridSizeText.classList.add('gridSizeText')
 
     gridDropdown = document.createElement("select")
@@ -474,6 +515,8 @@ function initialSetup() {
 
     gridSizeContainer.appendChild(gridSizeText)
     gridSizeContainer.appendChild(gridDropdown)
+
+    //-------------------------------------------------------------------------------- setting up start game -------------------------------------------------------------------------------- 
 
     startGameText = document.createElement("div")
     startGameText.classList.add('modalSelect')
@@ -520,7 +563,7 @@ function initialSetup() {
 
     uiDiv.appendChild(chooseDifficultyContainer)
     uiDiv.appendChild(gridSizeContainer)
-    // uiDiv.appendChild(playerSelectorContainer)
+    uiDiv.appendChild(playerSelectorContainer)
     uiDiv.appendChild(startGameText)
     uiDiv.appendChild(settings)
     mainlayout.appendChild(h1)
@@ -723,7 +766,7 @@ function save() {
     game["side"] = side
 
     game["cells"] = cells
-    game["displacement"] = displacement
+    game["displacement"] = displacement1
     game["snake"] = snake
     game["letterSequence"] = letterSequence
     game["colorSequence"] = colorSequence
@@ -759,26 +802,27 @@ function save() {
 
 function setup() {
     console.log(highScore)
-    initialSetup()
+    // initialSetup()
 
     // gridSize = askGridSize()
-    // initialised = true
-    // difficulty = "easy"
-    // gridSize = 20
+    initialised = true
+    difficulty = "easy"
+    gridSize = 20
+    numPlayers = 2
     // paused = true
     // paused = true
 
     document.getElementById("leftBtn").onclick = function () {
-        if (displacement != side) displacement = -side
+        if (displacement1 != side) displacement1 = -side
     }
     document.getElementById("rightBtn").onclick = function () {
-        if (displacement != -side) displacement = side
+        if (displacement1 != -side) displacement1 = side
     }
     document.getElementById("upBtn").onclick = function () {
-        if (displacement != 1) displacement = -1
+        if (displacement1 != 1) displacement1 = -1
     }
     document.getElementById("downBtn").onclick = function () {
-        if (displacement != -1) displacement = 1
+        if (displacement1 != -1) displacement1 = 1
 
     }
 
@@ -787,11 +831,13 @@ function setup() {
     }
 
     document.addEventListener('keydown', function (e) {
-        if (e.key === "ArrowLeft" || e.key === "a") {
-            if (displacement != side) displacement = -side
-        } else if (e.key === "ArrowRight" || e.key === "d") {
-            if (displacement != -side) displacement = side
-        } else if (e.key === "ArrowDown" || e.key === "s") {
+        if (e.key === "ArrowLeft") {
+            if (displacement1 != side) displacement1 = -side
+        }
+        else if (e.key === "a" && numPlayers > 1) { if (displacement2 != side) displacement2 = -side }
+        else if (e.key === "ArrowRight") { if (displacement1 != -side) displacement1 = side }
+        else if (e.key === "d" && numPlayers > 1) { if (displacement2 != -side) displacement2 = side }
+        else if (e.key === "ArrowDown") {
             if (!initialised) {
                 option = 1
 
@@ -800,8 +846,11 @@ function setup() {
                 settings.textContent = ">    Quit"
                 settings.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
             }
-            if (displacement != -1) displacement = 1
-        } else if (e.key === "ArrowUp" || e.key === "w") {
+            if (displacement1 != -1) displacement1 = 1
+        }
+        else if (e.key === "s" && numPlayers > 1) { if (displacement2 != -1) displacement2 = 1 }
+        else if (e.key === "w" && numPlayers > 1) { if (displacement2 != 1) displacement2 = -1 }
+        else if (e.key === "ArrowUp") {
             if (!initialised) {
                 option = 0
 
@@ -810,7 +859,7 @@ function setup() {
                 startGameText.textContent = ">  Start Game"
                 startGameText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
             }
-            if (displacement != 1) displacement = -1
+            if (displacement1 != 1) displacement1 = -1
         } else if (e.key === "p") {
             pause(paused)
         } else if (e.key === "Enter") {
@@ -818,6 +867,7 @@ function setup() {
                 if (option == 0) {
                     difficulty = selectDropdown.options[selectDropdown.selectedIndex].value
                     gridSize = gridDropdown.options[gridDropdown.selectedIndex].value
+                    numPlayers = playerDropdown.options[playerDropdown.selectedIndex].value
 
 
                     if ((sessionStorage.getItem('highScore' + difficulty)) == null) sessionStorage.setItem('highScore' + difficulty, 0)
@@ -844,8 +894,6 @@ function setup() {
             }
         }
     })
-
-
 
     setUpGui();
 }
@@ -885,7 +933,8 @@ function setUpGui() {
                 cells[i] = document.getElementById("square" + i)
             console.log(cells)
         }
-        updateSnake(snake)
+        updateSnakes(true, 0, true, 10*side)
+        console.log(snake)
 
         let str = "linear-gradient(0.25turn,#300350,#94167f)"
         document.body.style.background = str
@@ -897,14 +946,14 @@ function loop() {
         if (!paused) {
             if (lives > 0) {
                 updateGame()
-                move(displacement)
+                moveSnakes(displacement1, displacement2)
             } else if (lives === 0) {
                 console.log("you lost!")
                 document.getElementById('die').play()
                 gameLost()
                 return;
             }
-            // paused = true
+            // paused = true // uncomment to debug snake moverment
 
         } else {
         }
@@ -916,7 +965,7 @@ function loop() {
 }
 
 //movement 
-function move(displacement) {
+function moveSnake1(displacement) {
     let collide = true
     collide = checkCollision(snake[0], displacement)
     if (!collide) {
@@ -940,6 +989,41 @@ function move(displacement) {
 
     return collide;
 }
+
+function moveSnake2(displacement) {
+    let collide = true
+    collide = checkCollision(snake2[0], displacement)
+    if (!collide) {
+        cells[snake2[0]].innerText = cells[snake2[0]].innerText.replace(":D", '')
+        cells[snake2[0]].classList.remove('head2')
+        const tail = snake2.pop()
+        cells[tail].classList.remove('snake2')
+        cells[tail].classList.remove('tail2')
+        cells[tail].innerText = ''
+        snake2.unshift((snake2[0] + displacement))
+        
+        cells[snake2[snake2.length - 1]].classList.add('tail2')
+        cells[snake2[snake2.length - 1]].innerHTML = '<span></span>'
+
+        cells[snake2[0]].classList.add('snake2')
+        cells[snake2[0]].classList.add('head2')
+
+        cells[snake2[0]].innerHTML = '<span>:D</span>'
+    } else if (collide) {
+        endgame()
+    }
+
+    return collide;
+}
+
+function moveSnakes(displacement1, displacement2 = -Infinity) {
+    moveSnake1(displacement1)
+    if (numPlayers > 1) moveSnake2(displacement2)
+}
+
+
+
+
 
 function checkCollision(coord, displacement) {
     let y0 = Math.floor(coord % side)
@@ -968,11 +1052,15 @@ function checkCollision(coord, displacement) {
         return blockCollided(grid)
 
     }
-    if (snake.includes(grid)) {
-        console.log("snake collision")
-        message = "You collided with yourself!"
-        return true
-    }
+
+    //TODO: Sort this out
+
+    // if (snake.includes(grid)) {
+    //     console.log("snake collision")
+    //     message = "You collided with yourself!"
+    //     return true
+    // }
+
     if (powerUpCoords.includes(coord)) {
         let index = powerUpCoordBackup.indexOf(coord)
         if (index != -1) {
@@ -1000,6 +1088,7 @@ function checkCollision(coord, displacement) {
     })
     return false
 }
+
 function blockCollided(i) {
 
     let color = sequenceBackup.indexOf(i)
@@ -1042,11 +1131,10 @@ function blockCollided(i) {
         if (sequencePrompt.firstChild != null)
             sequencePrompt.removeChild(sequencePrompt.firstChild)
 
-        //play eating audio
 
         sequenceFinsihed = true
         score++
-        defaultTime += 50000 //+30s
+        defaultTime += 50000 //+50s
         updateGame()
         return false;
     }
@@ -1068,7 +1156,7 @@ function grow(grow) {
         cells[tail].classList.remove('snake')
         cells[tail].classList.remove('tail')
         cells[tail].innerText = ''
-        snake.unshift((snake[0] + displacement))
+        snake.unshift((snake[0] + displacement1))
         cells[snake[snake.length - 1]].classList.add('tail')
         cells[snake[snake.length - 1]].classList.add('snake')
         cells[snake[snake.length - 1]].innerText = ''
@@ -1088,7 +1176,7 @@ function grow(grow) {
         cells[tail].classList.remove('snake')
         cells[tail].classList.remove('tail')
         cells[tail].innerText = ''
-        snake.unshift((snake[0] + displacement))
+        snake.unshift((snake[0] + displacement1))
         cells[snake[snake.length - 1]].classList.add('tail')
         cells[snake[snake.length - 1]].classList.add('snake')
         cells[snake[snake.length - 1]].innerText = ''
@@ -1102,8 +1190,10 @@ function grow(grow) {
 function endgame() {
     lives--
     document.getElementById('damage').play()
-    updateSnake()
-    displacement = 1
+    updateSnakes()
+    displacement1 = 1
+    displacement2 = 1
+
     if (lives > 0) {
         if (score > highScore) highScore = score
         sessionStorage.setItem("highScore" + difficulty, highScore)
