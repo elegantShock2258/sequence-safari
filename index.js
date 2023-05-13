@@ -294,20 +294,20 @@ function updateGame() {
     // TODO: uncomment when 2 players is working
 
 
-    // if (sequenceFinsihed) {
-    //     generateSequence()
-    //     placeSequence()
-    //     sequenceFinsihed = false
-    //     console.log(sequence)
+    if (sequenceFinsihed) {
+        generateSequence()
+        placeSequence()
+        sequenceFinsihed = false
+        console.log(sequence)
 
-    //     if (difficulty != "easy") {
-    //         for (let i = 0; i < 3 * Math.random(); i++) {
-    //             setUpPortal()
-    //             updatePortal()
-    //         }
-    //         placePowerUps()
-    //     }
-    // }
+        if (difficulty != "easy") {
+            for (let i = 0; i < 3 * Math.random(); i++) {
+                setUpPortal()
+                updatePortal()
+            }
+            placePowerUps()
+        }
+    }
 
     // console.log(currentTime)
     scoreEle.textContent = "Score: " + score
@@ -895,7 +895,7 @@ function setup() {
         }
     })
 
-    setUpGui();
+    setUpGui();  // debug
 }
 
 
