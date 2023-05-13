@@ -158,14 +158,14 @@ body {
     font-family: 'Press Start 2P', Courier, monospace;
 }
 
-
-.block2 {
+*/
+.block  {
     font-family: 'Press Start 2P';
     font-weight: bolder;
     border: 2px aliceblue solid;
     color: #303030;
     font-size: smaller;
-} */
+} 
 
 .chooseDifficultyContainer{
     display: flex;

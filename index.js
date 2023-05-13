@@ -166,7 +166,8 @@ function updatePortal() {
 function generateSequence() {
     let i = 0;
     let a = 360 * Math.random()
-    while (i != (sequenceLenght)) {
+    console.log("sequence length: ",sequenceLenght)
+    while (i != sequenceLenght) {
         let j = Math.floor(side * side * Math.random())
         if (j in snake) continue
         else {
@@ -232,12 +233,13 @@ function updateGame() {
         sequenceFinsihed = false
         console.log(sequence)
 
-        for (let i = 0; i < 3 * Math.random(); i++) {
-            setUpPortal()
-            updatePortal()
+        if (difficulty != "easy") {
+            for (let i = 0; i < 3 * Math.random(); i++) {
+                setUpPortal()
+                updatePortal()
+            }
+            placePowerUps()
         }
-
-        placePowerUps()
     }
 
     // console.log(currentTime)
@@ -251,7 +253,7 @@ function updateGame() {
         endgame()
     }
 
-    updatePortal()
+    if (difficulty != "easy") updatePortal()
 }
 
 // grid
@@ -299,8 +301,9 @@ let startGameText = ""
 let settings = ""
 
 let difficulty = ""
+let gridSize = 20
 let selectDropdown = null
-let playerDropdown = null
+let gridDropdown = null
 
 function initialSetup() {
     paused = true
@@ -362,15 +365,11 @@ function initialSetup() {
     // playerSelectorContainer.appendChild(numberOfPlayersText)
     // playerSelectorContainer.appendChild(playerDropdown)
 
-    // asking difficulty
+    //-------------------------------------------------------------------------------- asking difficulty -------------------------------------------------------------------------------- 
 
 
     let chooseDifficultyContainer = document.createElement("div")
     chooseDifficultyContainer.classList.add('chooseDifficultyContainer')
-    
-    let playerAsker = document.createElement("div")
-    playerAsker.classList.add('chooseDifficultyContainer')
-
 
     let textChooseDifficulty = document.createElement("span")
     textChooseDifficulty.textContent = "Choose a Difficulty:   "
@@ -380,6 +379,7 @@ function initialSetup() {
     selectDropdown.attributes.name = "difficutly"
     selectDropdown.classList.add('selectDropdown')
 
+
     let chooseDifficulty = document.createElement("option")
     chooseDifficulty.value = "choose difficulty"
     chooseDifficulty.textContent = "choose difficulty"
@@ -387,27 +387,56 @@ function initialSetup() {
     chooseDifficulty.classList.add('chooseDifficultyDropdown')
 
     let easyOption = document.createElement("option")
-    easyOption.value = 20
-    easyOption.textContent = "easy (20x20)"
+    easyOption.value = "easy"
+    easyOption.textContent = "easy"
     easyOption.classList.add('easyOption')
-    let mediumOption = document.createElement("option")
-    mediumOption.value = 40
-    mediumOption.textContent = "medium (40x40)"
-    mediumOption.classList.add('mediumOption')
     let hardOption = document.createElement("option")
-    hardOption.value = 80
-    hardOption.textContent = "hard (80x80)"
+    hardOption.value = "hard"
+    hardOption.textContent = "hard"
     hardOption.classList.add('hardOption')
 
     selectDropdown.appendChild(chooseDifficulty)
     selectDropdown.appendChild(easyOption)
-    selectDropdown.appendChild(mediumOption)
     selectDropdown.appendChild(hardOption)
-
 
     chooseDifficultyContainer.appendChild(textChooseDifficulty)
     chooseDifficultyContainer.appendChild(selectDropdown)
 
+    //-------------------------------------------------------------------------------- grid size --------------------------------------------------------------------------------  
+
+    let gridSizeContainer = document.createElement("div")
+    gridSizeContainer.classList.add('chooseDifficultyContainer')
+
+    let gridSizeText = document.createElement("span")
+    gridSizeText.textContent = "Grid Size:   "
+    gridSizeText.classList.add('gridSizeText')
+
+    gridDropdown = document.createElement("select")
+    gridDropdown.attributes.name = "Grid Size: "
+    gridDropdown.classList.add('selectDropdown')
+
+
+    let gridSizeOption = document.createElement("option")
+    gridSizeOption.textContent = "choose grid size"
+    gridSizeOption.disabled = true
+    gridSizeOption.classList.add('chooseDifficultyDropdown')
+
+    let easyOption20 = document.createElement("option")
+    easyOption20.value = 20
+    easyOption20.textContent = "20"
+    easyOption20.classList.add('easyOption')
+    let hardOption40 = document.createElement("option")
+    hardOption40.value = 40 
+    hardOption40.textContent = "40"
+    hardOption40.classList.add('hardOption')
+
+    gridDropdown.appendChild(gridSizeOption)
+    gridDropdown.appendChild(easyOption20)
+    gridDropdown.appendChild(hardOption40)
+
+    gridSizeContainer.appendChild(gridSizeText)
+    gridSizeContainer.appendChild(gridDropdown)
+    
     startGameText = document.createElement("div")
     startGameText.classList.add('modalSelect')
     startGameText.classList.add('modalSelectText')
@@ -417,13 +446,6 @@ function initialSetup() {
     settings = document.createElement("div")
     settings.classList.add('modalSelect')
     settings.textContent = "Quit"
-
-    let highScoreEle = document.createElement("div")
-    highScoreEle.classList.add('modalSelect')
-    highScoreEle.style.fontSize = "1em"
-    highScoreEle.style.textShadow = ""
-    highScoreEle.textContent = "High Score: " + highScore
-    highScoreEle.style.marginBottom = "10%"
 
     option = 0
 
@@ -450,15 +472,16 @@ function initialSetup() {
         e.preventDefault()
         option = 0
 
-        settings.textContent = "Quit"
+        settings.textcontent = "quit"
         settings.style.animation = "none"
-        startGameText.textContent = ">  Start Game"
-        startGameText.style.animation = "cursorSelection 0.2s cubic-bezier(1,0,0,1),selectText 0.5s cubic-bezier(1,0,0,1) infinite"
+        startGameText.textcontent = ">  start game"
+        startGameText.style.animation = "cursorselection 0.2s cubic-bezier(1,0,0,1),selecttext 0.5s cubic-bezier(1,0,0,1) infinite"
 
         window.close()
     })
 
     uiDiv.appendChild(chooseDifficultyContainer)
+    uiDiv.appendChild(gridSizeContainer)
     // uiDiv.appendChild(playerSelectorContainer)
     uiDiv.appendChild(startGameText)
     uiDiv.appendChild(settings)
@@ -466,7 +489,6 @@ function initialSetup() {
     mainlayout.appendChild(h1_2)
     mainlayout.appendChild(h1_3)
     mainlayout.appendChild(uiDiv)
-    mainlayout.appendChild(highScoreEle)
     modal.appendChild(mainlayout)
 
     document.body.appendChild(modal)
@@ -571,12 +593,17 @@ function pause() {
     }
 
 }
-function setup() {
-    if ((sessionStorage.getItem('highScore')) == null) sessionStorage.setItem('highScore', 0)
 
-    highScore = sessionStorage.getItem('highScore')
+
+function setup() {
     console.log(highScore)
     initialSetup()
+
+    // gridSize = askGridSize()
+    // initialised = true
+    // difficulty = "easy"
+
+    // paused = true
 
     document.getElementById("leftBtn").onclick = function () {
         if (displacement != side) displacement = -side
@@ -623,7 +650,18 @@ function setup() {
             if (!initialised) {
                 if (option == 0) {
                     difficulty = selectDropdown.options[selectDropdown.selectedIndex].value
+                    gridSize = gridDropdown.options[gridDropdown.selectedIndex].value
+
+
+                    if ((sessionStorage.getItem('highScore' + difficulty)) == null) sessionStorage.setItem('highScore' + difficulty, 0)
+                    highScore = sessionStorage.getItem('highScore' + difficulty)
                     console.log("difficulty: ", difficulty)
+
+                    if (difficulty === "easy") {
+                        sequenceLenght = 4
+                    }
+
+                    console.log(difficulty,gridSize,sequenceLenght)
 
                     document.body.removeChild(modal)
                     initialised = true
@@ -639,12 +677,19 @@ function setup() {
             }
         }
     })
+
+
+
+    setUpGui();
+
+
 }
 
 
 
 function setUpGui() {
     if (initialised) {
+
         // initialised = true
         // gameLost("You Collided with a wall!")
 
@@ -652,18 +697,18 @@ function setUpGui() {
         // console.log(size)
         let squareSide = null
         console.log("hmm difficulty now: ", difficulty)
-        if (difficulty == 80) {
+        if (gridSize == 80) {
             sequenceLenght = 20
             squareSide = 1
         }
-        else if (difficulty == 40) {
-            sequenceLenght = 15
+        else if (gridSize == 40) {
+            sequenceLenght = 10
             squareSide = 2
         }
-        else if (difficulty == 20) {
+        else if (gridSize == 20) {
             squareSide = 4
         }
-        console.log(squareSide, difficulty)
+        console.log(squareSide, gridSize)
         setUpGrid(squareSide, size)
 
         side = Math.floor(size / squareSide)
@@ -695,7 +740,8 @@ function loop() {
         } else {
         }
 
-        setTimeout(updateLoop, Math.floor(100 * (1 - currentTime / defaultTime)))
+        if (difficulty === "easy") setTimeout(updateLoop, Math.floor(100))
+        else setTimeout(updateLoop, Math.floor(100 * (1 - currentTime / defaultTime)))
     }
     setTimeout(updateLoop, 100)
 }
@@ -705,7 +751,7 @@ function move(displacement) {
     let collide = true
     collide = checkCollision(snake[0], displacement)
     if (!collide) {
-        cells[snake[0]].innerText = cells[snake[0]].innerText.replace("😚", '')
+        cells[snake[0]].innerText = cells[snake[0]].innerText.replace(":D", '')
         cells[snake[0]].classList.remove('head')
         const tail = snake.pop()
         cells[tail].classList.remove('snake')
@@ -718,7 +764,7 @@ function move(displacement) {
         cells[snake[0]].classList.add('snake')
         cells[snake[0]].classList.add('head')
 
-        cells[snake[0]].innerHTML = '<span>😚</span>'
+        cells[snake[0]].innerHTML = '<span>:D</span>'
     } else if (collide) {
         endgame()
     }
@@ -891,7 +937,7 @@ function endgame() {
     displacement = 1
     if (lives > 0) {
         if (score > highScore) highScore = score
-        sessionStorage.setItem("highScore", highScore)
+        sessionStorage.setItem("highScore" + difficulty, highScore)
         playground.classList.remove('playground-damage')
         playground.classList.add('playground-damage')
 
@@ -900,7 +946,7 @@ function endgame() {
         }, 300)
     } else if (lives == 0) {
         if (score > highScore) highScore = score
-        sessionStorage.setItem("highScore", highScore)
+        sessionStorage.setItem("highScore" + difficulty, highScore)
         gameLost(message)
         return;
     }
