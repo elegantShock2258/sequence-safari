@@ -47,7 +47,7 @@ let lostText = ""
 let slider = []
 
 let portalSprites = ["Assets/portal1.png", "Assets/portal2.png", "Assets/portal3.png", "Assets/portal4.png"]
-let colorDiff = 10
+let colorDiff = 40
 let selectDropdown = null
 let playerDropdown = null
 let gridDropdown = null
@@ -265,14 +265,14 @@ function placeSequence() {
     sequencePrompt.textContent = ''
     for (let i = sequence.length - 1; i >= 0; i--) {
         // console.log(sequence[i])
-        cells[sequence[i]].innerHTML = "<span>" + (letterSequence[score][i]) + "</span>"
-        cells[sequence[i]].style.background = `hsl(${colorSequence[i]},100%,40%)`
+        cells[sequence[i]].innerHTML = "<span>" + (letterSequence[Math.floor(sequenceLenght / 5) - 1][score][i]) + "</span>"
+        cells[sequence[i]].style.background = `hsl(${colorSequence[i]},100%,50%)`
         cells[sequence[i]].classList.add("block")
 
         let div = document.createElement('div')
         div.classList.add("prompt")
-        div.innerText = (letterSequence[score][i])
-        div.style.background = `hsl(${colorSequence[i]},100%,40%)`
+        div.innerText = (letterSequence[Math.floor(sequenceLenght / 5) - 1][score][i])
+        div.style.background = `hsl(${colorSequence[i]},100%,50%)`
 
         sequencePrompt.appendChild(div)
     }
@@ -849,12 +849,8 @@ function setup() {
                     console.log("difficulty: ", difficulty)
 
                     if (difficulty === "easy" && JSON.parse(sessionStorage.getItem('game')) == null) {
-                        sequenceLenght = 5
-                        let url = `https://random-word-api.herokuapp.com/word?length=${sequenceLenght}?number=100`
-                        const response = await fetch(url, {})
-                        if (response.ok) {
-                            letterSequence = ((await response.text()).toString().replace("[", "").replace("]", "").replaceAll("\"", "").split(""))
-                        }
+                        if(gridSize == 20) sequenceLenght = 5
+                        if(gridSize == 40) sequenceLenght = 15
                     }
 
                     // console.log(difficulty, gridSize, sequenceLenght)
@@ -890,28 +886,18 @@ async function setUpGui() {
         // console.log("hmm difficulty now: ", difficulty)
         if (gridSize == 80) {
             if (JSON.parse(sessionStorage.getItem('game')) != null) {
-                sequenceLenght = 20
-                let url = `https://random-word-api.herokuapp.com/word?length=${sequenceLenght}`
-                const response = await fetch(url, {})
-                if (response.ok) {
-                    letterSequence = ((await response.text()).toString().replace("[", "").replace("]", "").replaceAll("\"", "").split(""))
-                }
+                sequenceLenght = 15
             }
             squareSide = 1
         }
         else if (gridSize == 40) {
             if (JSON.parse(sessionStorage.getItem('game')) != null) {
                 sequenceLenght = 10
-                let url = `https://random-word-api.herokuapp.com/word?length=${sequenceLenght}`
-                const response = await fetch(url, {})
-                if (response.ok) {
-                    letterSequence = ((await response.text()).toString().replace("[", "").replace("]", "").replaceAll("\"", "").split(""))
-                }
             }
             squareSide = 2
         }
         else if (gridSize == 20) {
-            squareSide = 4
+            squareSide = 5
         }
         // console.log(squareSide, gridSize)
         setUpGrid(squareSide, size)
@@ -974,7 +960,7 @@ function moveSnake1(displacement) {
         cells[tail].classList.remove('snake')
         cells[tail].classList.remove('tail')
         cells[tail].innerText = ''
-        snake.unshift((snake[0] + displacement)%(side*side))
+        snake.unshift((snake[0] + displacement) % (side * side))
         cells[snake[snake.length - 1]].classList.add('tail')
         cells[snake[snake.length - 1]].innerHTML = '<span></span>'
 
@@ -999,7 +985,7 @@ function moveSnake2(displacement) {
         cells[tail].classList.remove('snake2')
         cells[tail].classList.remove('tail2')
         cells[tail].innerText = ''
-        snake2.unshift((snake2[0] + displacement)%(side*side))
+        snake2.unshift((snake2[0] + displacement) % (side * side))
 
         cells[snake2[snake2.length - 1]].classList.add('tail2')
         cells[snake2[snake2.length - 1]].innerHTML = '<span></span>'
@@ -1339,6 +1325,27 @@ function endgame(snakeNumber = 1) {
         gameLost(message)
         return;
     }
+}
+
+document.body.onload = async (e) => {
+    let url = `https://random-word-api.herokuapp.com/word?length=${5}&number=100`
+    const response = await fetch(url, {})
+    if (response.ok) {
+        letterSequence[0] = JSON.parse(await response.text())
+    }
+
+    let url1 = `https://random-word-api.herokuapp.com/word?length=${10}&number=100`
+    const response1 = await fetch(url1, {})
+    if (response1.ok) {
+        letterSequence[1] = JSON.parse(await response1.text())
+    }
+
+    let url2 = `https://random-word-api.herokuapp.com/word?length=${15}&number=100`
+    const response2 = await fetch(url2, {})
+    if (response2.ok) {
+        letterSequence[2] = JSON.parse(await response2.text())
+    }
+
 }
 
 setup()
