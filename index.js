@@ -265,13 +265,13 @@ function placeSequence() {
     sequencePrompt.textContent = ''
     for (let i = sequence.length - 1; i >= 0; i--) {
         // console.log(sequence[i])
-        cells[sequence[i]].innerHTML = "<span>" + (letterSequence[i]) + "</span>"
+        cells[sequence[i]].innerHTML = "<span>" + (letterSequence[score][i]) + "</span>"
         cells[sequence[i]].style.background = `hsl(${colorSequence[i]},100%,40%)`
         cells[sequence[i]].classList.add("block")
 
         let div = document.createElement('div')
         div.classList.add("prompt")
-        div.innerText = (letterSequence[i])
+        div.innerText = (letterSequence[score][i])
         div.style.background = `hsl(${colorSequence[i]},100%,40%)`
 
         sequencePrompt.appendChild(div)
@@ -850,7 +850,7 @@ function setup() {
 
                     if (difficulty === "easy" && JSON.parse(sessionStorage.getItem('game')) == null) {
                         sequenceLenght = 5
-                        let url = `https://random-word-api.herokuapp.com/word?length=${sequenceLenght}`
+                        let url = `https://random-word-api.herokuapp.com/word?length=${sequenceLenght}?number=100`
                         const response = await fetch(url, {})
                         if (response.ok) {
                             letterSequence = ((await response.text()).toString().replace("[", "").replace("]", "").replaceAll("\"", "").split(""))
