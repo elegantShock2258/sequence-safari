@@ -65,10 +65,11 @@ let powerUpCoords = []
 let powerUpCoordBackup = []
 let powerUpsNum = []
 
-
+let playerLost = ""
+let playerWin = ""
 if (JSON.parse(sessionStorage.getItem('game')) != null) {
 
-    console.log("cakked")
+    // console.log("cakked")
     let game = JSON.parse(sessionStorage.getItem('game'))
     highScore = game["highscore"]
 
@@ -85,7 +86,7 @@ if (JSON.parse(sessionStorage.getItem('game')) != null) {
     letterSequence = game["letterSequence"]
     colorSequence = game["colorSequence"]
     sequenceFinsihed = game["sequenceFinsihed"]
-    
+
     sequenceLenght = game["sequenceLenght"]
 
 
@@ -105,9 +106,6 @@ if (JSON.parse(sessionStorage.getItem('game')) != null) {
 
 
 }
-
-
-// change powerup implt for second snake.
 
 let powerUpMethod = [(snakeNumber) => {
     if (snakeNumber == 1) {
@@ -153,13 +151,13 @@ let powerUpMethod = [(snakeNumber) => {
     let blocksEaten = Math.floor((sequence.length - 3) * Math.random())
     if (blocksEaten == 0) blocksEaten = 1
     if (sequence.length != blocksEaten) {
-        console.log(sequence, blocksEaten)
+        // console.log(sequence, blocksEaten)
         for (let j = 0; j < blocksEaten; j++) {
             let i = sequence[j]
             let color = sequenceBackup.indexOf(sequence[j])
             let last = sequence.pop()
 
-            console.log(i, last, sequence)
+            // console.log(i, last, sequence)
 
 
             cells[last].classList.add('square')
@@ -175,33 +173,33 @@ let powerUpMethod = [(snakeNumber) => {
 
         }
     }
-    console.log(sequence)
+    // console.log(sequence)
 }
 ]
-
+//setting up things and updating them 
 function setUpPortal() {
-    // console.log("called")
+    // // console.log("called")
     let i = 0;
     let obj = []
 
-    // console.log(snake)
-    // console.log(sequence)
+    // // console.log(snake)
+    // // console.log(sequence)
 
     while (i != 2) {
         let j = Math.floor(side * side * Math.random())
 
 
         if (snake.includes(j)) {
-            console.log("got snake")
+            // console.log("got snake")
             continue
         }
         else if (sequence.includes(j)) {
-            console.log("got sequence")
+            // console.log("got sequence")
             continue
         }
         else {
             obj[i] = j
-            // console.log(i, obj[i])
+            // // console.log(i, obj[i])
             i++
         }
     }
@@ -242,7 +240,7 @@ function updatePortal() {
 function generateSequence() {
     let i = 0;
     let a = 360 * Math.random()
-    console.log("sequence length: ", sequenceLenght)
+    // console.log("sequence length: ", sequenceLenght)
     while (i != sequenceLenght) {
         let j = Math.floor(side * side * Math.random())
         if (j in snake) continue
@@ -258,10 +256,10 @@ function generateSequence() {
 
 }
 function placeSequence() {
-    console.log("placing sequence: ", sequence,"of length",sequenceLenght)
+    // console.log("placing sequence: ", sequence,"of length",sequenceLenght)
     sequencePrompt.textContent = ''
     for (let i = sequence.length - 1; i >= 0; i--) {
-        console.log(sequence[i])
+        // console.log(sequence[i])
         cells[sequence[i]].innerHTML = "<span>" + String.fromCharCode(letterSequence[i]) + "</span>"
         cells[sequence[i]].style.background = `hsl(${colorSequence[i]},100%,40%)`
         cells[sequence[i]].classList.add("block")
@@ -291,7 +289,7 @@ function placePowerUps() {
         // cells[coordinate].classList.add(powerUpsClasses[powerUps[i]])
         let image = document.createElement('img')
         image.src = powerUps[powerUpsNum[i]]
-        console.log(powerUpsNum[i])
+        // console.log(powerUpsNum[i])
         image.width = cells[coordinate].clientHeight
         cells[coordinate].appendChild(image)
 
@@ -304,14 +302,13 @@ function placePowerUps() {
 function updateGame() {
 
     currentTime += timeIncrement
-    // TODO: uncomment when 2 players is working
 
 
     if (sequenceFinsihed) {
         generateSequence()
         placeSequence()
         sequenceFinsihed = false
-        console.log(sequence)
+        // console.log(sequence)
 
         if (difficulty != "easy") {
             for (let i = 0; i < 3 * Math.random(); i++) {
@@ -330,7 +327,7 @@ function updateGame() {
     barObject.style.width = `${currentTime * 100 / defaultTime}%`
     if (currentTime >= defaultTime) {
         message = "You ran out of time!"
-        endgame()
+        endgame(1)
     }
 
     if (difficulty != "easy") updatePortal()
@@ -339,7 +336,7 @@ function updateGame() {
 // grid
 function setUpGrid(width = 10, sqaureWidth = 80) {
     let numSquares = (sqaureWidth / width) * (sqaureWidth / width)
-    console.log("number of squaare: ", numSquares)
+    // console.log("number of squaare: ", numSquares)
     for (let i = 0; i < numSquares; i++) {
         let div = document.createElement('div')
         div.classList.add('square')
@@ -388,7 +385,7 @@ function updateSnake2(first = false, spawn = side) {
         cells[i].classList.add('snake' + classModifier)
     })
 
-    console.log(snake2)
+    // console.log(snake2)
     cells[snake2[snake2.length - 1]].classList.add('tail' + classModifier)
     cells[snake2[snake2.length - 1]].innerHTML = '<span></span>'
 
@@ -397,6 +394,9 @@ function updateSnake2(first = false, spawn = side) {
     cells[snake2[0]].innerHTML = '<span></span>'
 }
 
+//modal dialougues 
+
+//initial modal dialog 
 function initialSetup() {
     paused = true
     modal = document.createElement("div")
@@ -588,6 +588,7 @@ function initialSetup() {
     document.body.appendChild(modal)
 }
 
+// dialogue for game lost
 function gameLost(message) {
     paused = true
 
@@ -651,6 +652,7 @@ function gameLost(message) {
 
 }
 
+// pause modal
 function pause() {
     if (!paused) {
         paused = true
@@ -701,6 +703,7 @@ function pause() {
 
 }
 
+// save game state
 function save() {
     let game = {}
     game["highscore"] = highScore
@@ -768,10 +771,11 @@ function save() {
 
 }
 
+// GAME SETUP 
 function setup() {
-    console.log(highScore)
+    // console.log(highScore)
     initialSetup()
-
+    // For debugging
     // initialised = true
     // difficulty = "easy"
     // gridSize = 20
@@ -837,17 +841,17 @@ function setup() {
 
                     if ((sessionStorage.getItem('highScore' + difficulty)) == null) sessionStorage.setItem('highScore' + difficulty, 0)
                     highScore = sessionStorage.getItem('highScore' + difficulty)
-                    console.log("difficulty: ", difficulty)
+                    // console.log("difficulty: ", difficulty)
 
                     if (difficulty === "easy" && JSON.parse(sessionStorage.getItem('game')) != null) {
                         sequenceLenght = 4
                     }
 
-                    console.log(difficulty, gridSize, sequenceLenght)
+                    // console.log(difficulty, gridSize, sequenceLenght)
 
                     document.body.removeChild(modal)
                     initialised = true
-                    console.log(initialised)
+                    // console.log(initialised)
                     paused = false
 
                     setUpGui();
@@ -863,7 +867,7 @@ function setup() {
     // setUpGui();  // debug
 }
 
-
+// initialising game grid
 function setUpGui() {
     if (initialised) {
 
@@ -873,7 +877,7 @@ function setUpGui() {
         let size = Math.round(playground.clientWidth * 100 / window.innerHeight)
         // console.log(size)
         let squareSide = null
-        console.log("hmm difficulty now: ", difficulty)
+        // console.log("hmm difficulty now: ", difficulty)
         if (gridSize == 80) {
             if (JSON.parse(sessionStorage.getItem('game')) != null) sequenceLenght = 20
             squareSide = 1
@@ -885,24 +889,24 @@ function setUpGui() {
         else if (gridSize == 20) {
             squareSide = 4
         }
-        console.log(squareSide, gridSize)
+        // console.log(squareSide, gridSize)
         setUpGrid(squareSide, size)
 
         side = Math.floor(size / squareSide)
-        console.log(side)
+        // console.log(side)
 
         if (cells === "" || typeof cells === "undefined") {
             cells = []
-            console.log("generating cells")
+            // console.log("generating cells")
             for (let i = 0; i < side * side; i++)
                 cells[i] = document.getElementById("square" + i)
 
-            console.log(cells)
-            console.log("cells generated!")
+            // console.log(cells)
+            // console.log("cells generated!")
         }
 
         updateSnakes(true, 0, true, 10 * side)
-        console.log(snake)
+        // console.log(snake)
 
         let str = "linear-gradient(0.25turn,#300350,#94167f)"
         document.body.style.background = str
@@ -911,6 +915,7 @@ function setUpGui() {
     }
 }
 
+// GAME LOOP 
 function loop() {
     function updateLoop(timeout) {
         if (!paused) {
@@ -934,7 +939,7 @@ function loop() {
     setTimeout(updateLoop, 100)
 }
 
-//movement 
+//movement and collision detection 
 function moveSnake1(displacement) {
     let collide = true
     collide = checkCollision(snake[0], displacement, 1)
@@ -954,7 +959,7 @@ function moveSnake1(displacement) {
 
         cells[snake[0]].innerHTML = '<span>:D</span>'
     } else if (collide) {
-        endgame()
+        endgame(1)
     }
 
     return collide;
@@ -980,7 +985,7 @@ function moveSnake2(displacement) {
 
         cells[snake2[0]].innerHTML = '<span>:D</span>'
     } else if (collide) {
-        endgame()
+        endgame(2)
     }
 
     return collide;
@@ -1000,29 +1005,28 @@ function checkCollision(coord, displacement, snakeNumber) {
 
     let x = x0 + xd
     let y = y0 + yd
-    // console.log(x * side + y, sequence)
-    if (y > side - 1 || y < 0) {
-        console.log("wall collision")
-        message = "You hit a wall!"
-        return true
-    }
-    if (x > side - 1 || x < 0) {
-        console.log("wall collision")
-        message = "You hit a wall!"
-        return true
-    }
+    // // console.log(x * side + y, sequence)
+    // if (y > side - 1 || y < 0) {
+    //     // console.log("wall collision")
+    //     message = "You hit a wall!"
+    //     return true
+    // }
+    // if (x > side - 1 || x < 0) {
+    //     // console.log("wall collision")
+    //     message = "You hit a wall!"
+    //     return true
+    // }
     const grid = x * side + (y % side)
 
     if (sequence.includes(grid)) {
-        console.log("block collision " + grid)
+        // console.log("block collision " + grid)
         return blockCollided(grid, snakeNumber)
 
     }
 
-    //TODO: Sort this out
     if (numPlayers == 1) {
         if (snake.includes(grid)) {
-            console.log("snake collision")
+            // console.log("snake collision")
             message = "You collided with yourself!"
             return true
         }
@@ -1030,13 +1034,13 @@ function checkCollision(coord, displacement, snakeNumber) {
         if (snakeNumber == 1) {
             // checking for 1st snake colliding on snake 2
             if (snake2.includes(grid)) {
-                console.log("snake collision")
+                // console.log("snake collision")
                 message = "Green Snake collided with the Purple Snake!"
                 return true
             }
             // checking for 1st snake colliding on itself
             if (snake.includes(grid)) {
-                console.log("snake collision")
+                // console.log("snake collision")
                 message = "Green Snake Collided on itself!"
                 return true
             }
@@ -1044,13 +1048,13 @@ function checkCollision(coord, displacement, snakeNumber) {
         else if (snakeNumber == 2) {
             // checking for 2st snake colliding on snake 1
             if (snake.includes(grid)) {
-                console.log("snake collision")
+                // console.log("snake collision")
                 message = "Purple Snake collided with the Green Snake!"
                 return true
             }
             // checking for 2e snake colliding on itself
             if (snake2.includes(grid)) {
-                console.log("snake collision")
+                // console.log("snake collision")
                 message = "Purple Snake collided with itself!"
                 return true
             }
@@ -1061,9 +1065,9 @@ function checkCollision(coord, displacement, snakeNumber) {
     if (powerUpCoords.includes(coord)) {
         let index = powerUpCoordBackup.indexOf(coord)
         if (index != -1) {
-            console.log("power up: " + index)
+            // console.log("power up: " + index)
             powerUpCoords = powerUpCoords.splice(powerUpCoords.indexOf(coord), 1)
-            console.log(powerUpCoords)
+            // console.log(powerUpCoords)
             if (powerUpsNum[index] != 0) powerUpMethod[powerUpsNum[index]]()
             else if (powerUpsNum[index] == 0) {
                 powerUpMethod[powerUpsNum[index]](snakeNumber)
@@ -1074,7 +1078,7 @@ function checkCollision(coord, displacement, snakeNumber) {
 
     portals.forEach((portal) => {
         if (portal.includes(grid)) {
-            console.log("portal collision")
+            // console1.log("portal collision")
             if (numPlayers == 1) {
                 cells[snake[0]].classList.remove('head')
                 cells[snake[0]].classList.remove('snake')
@@ -1109,7 +1113,7 @@ function blockCollided(i, snakeNumber) {
     let color = sequenceBackup.indexOf(i)
     let last = sequence.pop()
 
-    console.log(i, last, sequence)
+    // console1.log(i, last, sequence)
     if (i == last && sequence.length > 0) {
 
         cells[i].classList.add('square')
@@ -1138,7 +1142,7 @@ function blockCollided(i, snakeNumber) {
         cells[i].innerText = ''
 
         grow(true, snakeNumber)
-        console.log("sequence finsihed!")
+        // console.log("sequence finsihed!")
 
         let str = "linear-gradient(0.25turn," + colorSequence.slice(-(sequenceLenght - color)).map((e) => "hsl(" + e + ",100%,40%)").toLocaleString() + "," + Array(sequence.length).fill("black").toLocaleString() + ")"
         document.body.style.background = str
@@ -1154,7 +1158,7 @@ function blockCollided(i, snakeNumber) {
         return false;
     }
     else {
-        console.log("wrong sequence")
+        // console.log("wrong sequence")
         message = "You Choose the Wrong Sequence!"
         lives = 0
         gameLost(message)
@@ -1286,13 +1290,16 @@ function grow(grow, snakeNumber) {
     }
 }
 
-function endgame() {
+// GAME END FUNCTION 
+
+function endgame(snakeNumber = 1) {
     lives--
     document.getElementById('damage').play()
     updateSnakes()
     displacement1 = 1
     displacement2 = 1
-
+    playerLost = snakeNumber
+    if (numPlayers > 1) message = 'Snake ' + snakeNumber + ' lost!'
     if (lives > 0) {
         if (score > highScore) highScore = score
         sessionStorage.setItem("highScore" + difficulty, highScore)
