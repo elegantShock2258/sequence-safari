@@ -974,12 +974,15 @@ function moveSnake1(displacement) {
         else if (displacement == -1) dx = -1
         else if (displacement == -side) dy = -1
 
-        x = (x + dx) % side
-        y = (y + dy) % side
+        x = (x + dx + side) % side
+        let yChange = (y + dy) 
+        yChange = yChange<0?yChange + side:yChange
+        y = yChange % side
 
         let snakeNetDisplacement = (y * side + x)
 
         snake.unshift(snakeNetDisplacement)
+        console.log(snakeNetDisplacement)
         cells[snake[snake.length - 1]].classList.add('tail')
         cells[snake[snake.length - 1]].innerHTML = '<span></span>'
 
@@ -1016,7 +1019,7 @@ function moveSnake2(displacement) {
         else if (displacement == -1) dx = -1
         else if (displacement == -side) dy = -1
 
-        x = (x + dx) % side
+        x = (x + dx + side) % side
         y = (y + dy) % side
 
         let snakeNetDisplacement = (y * side + x)
