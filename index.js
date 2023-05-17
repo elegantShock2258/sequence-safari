@@ -849,8 +849,8 @@ function setup() {
                     console.log("difficulty: ", difficulty)
 
                     if (difficulty === "easy" && JSON.parse(sessionStorage.getItem('game')) == null) {
-                        if(gridSize == 20) sequenceLenght = 5
-                        if(gridSize == 40) sequenceLenght = 15
+                        if (gridSize == 20) sequenceLenght = 5
+                        if (gridSize == 40) sequenceLenght = 15
                     }
 
                     // console.log(difficulty, gridSize, sequenceLenght)
@@ -960,7 +960,24 @@ function moveSnake1(displacement) {
         cells[tail].classList.remove('snake')
         cells[tail].classList.remove('tail')
         cells[tail].innerText = ''
-        snake.unshift((snake[0] + displacement) % (side * side))
+
+        // i switched up x & y 
+
+        let x = snake[0] % side
+        let y = Math.floor(snake[0] / side)
+
+        let dx = 0
+        let dy = 0
+
+        if (displacement == 1) dx = 1
+        else if (displacement == side) dy = 1
+
+        x = (x + dx) % side
+        y = (y + dy) % side
+
+        let snakeNetDisplacement = y*side + x
+
+        snake.unshift(snakeNetDisplacement)
         cells[snake[snake.length - 1]].classList.add('tail')
         cells[snake[snake.length - 1]].innerHTML = '<span></span>'
 
@@ -1016,11 +1033,10 @@ function checkCollision(coord, displacement, snakeNumber) {
     let x = x0 + xd
     let y = y0 + yd
     // // console.log(x * side + y, sequence)
-    // if (y > side - 1 || y < 0) {
-    //     // console.log("wall collision")
-    //     message = "You hit a wall!"
-    //     return true
-    // }
+    if (y > side - 1 || y < 0) {
+        // console.log("wall collision")
+        return false
+    }
     // if (x > side - 1 || x < 0) {
     //     // console.log("wall collision")
     //     message = "You hit a wall!"
