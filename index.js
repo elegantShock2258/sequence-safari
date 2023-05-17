@@ -961,8 +961,6 @@ function moveSnake1(displacement) {
         cells[tail].classList.remove('tail')
         cells[tail].innerText = ''
 
-        // i switched up x & y 
-
         let x = snake[0] % side
         let y = Math.floor(snake[0] / side)
 
@@ -971,11 +969,13 @@ function moveSnake1(displacement) {
 
         if (displacement == 1) dx = 1
         else if (displacement == side) dy = 1
+        else if (displacement == -1) dx = -1
+        else if (displacement == -side) dy = -1
 
         x = (x + dx) % side
         y = (y + dy) % side
 
-        let snakeNetDisplacement = y*side + x
+        let snakeNetDisplacement = (y * side + x)
 
         snake.unshift(snakeNetDisplacement)
         cells[snake[snake.length - 1]].classList.add('tail')
